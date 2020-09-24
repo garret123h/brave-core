@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/modules/storage/storage_namespace.h b/third_party/blink/renderer/modules/storage/storage_namespace.h
+index 98b7798fa7e07a9d0a76f97c11cb2b2931f4ae64..ba9a2753407e2bd68aa6ab44c5d06acdfcc945fd 100644
+--- a/third_party/blink/renderer/modules/storage/storage_namespace.h
++++ b/third_party/blink/renderer/modules/storage/storage_namespace.h
+@@ -117,6 +117,7 @@ class MODULES_EXPORT StorageNamespace final
+   // forcibly disconnects it so that it reconnects lazily when next needed.
+   // Also forces all owned CachedStorageAreas to be reconnected.
+   void ResetStorageAreaAndNamespaceConnections();
++  BRAVE_STORAGE_NAMESPACE_H
+ 
+  private:
+   void EnsureConnected();
