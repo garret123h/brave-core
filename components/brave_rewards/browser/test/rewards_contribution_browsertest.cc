@@ -119,7 +119,12 @@ class RewardsContributionBrowserTest : public InProcessBrowserTest {
 };
 
 IN_PROC_BROWSER_TEST_F(RewardsContributionBrowserTest, AutoContribution) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
+  rewards_service_->SetAutoContributeEnabled(true);
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   rewards_browsertest_helper::VisitPublisher(
@@ -143,7 +148,12 @@ IN_PROC_BROWSER_TEST_F(RewardsContributionBrowserTest, AutoContribution) {
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     AutoContributionMultiplePublishers) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
+  rewards_service_->SetAutoContributeEnabled(true);
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   rewards_browsertest_helper::VisitPublisher(
@@ -209,7 +219,12 @@ IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     AutoContributionMultiplePublishersUphold) {
   response_->SetVerifiedWallet(true);
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
+  rewards_service_->SetAutoContributeEnabled(true);
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
   contribution_->SetUpUpholdWallet(rewards_service_, 50.0);
 
   ledger::type::SKUOrderItemList items;
@@ -257,7 +272,12 @@ IN_PROC_BROWSER_TEST_F(
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     AutoContributeWhenACOff) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
+  rewards_service_->SetAutoContributeEnabled(true);
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   rewards_browsertest_helper::VisitPublisher(
@@ -281,7 +301,8 @@ IN_PROC_BROWSER_TEST_F(
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     TipVerifiedPublisher) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   contribution_->TipPublisher(
@@ -293,7 +314,8 @@ IN_PROC_BROWSER_TEST_F(
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     TipUnverifiedPublisher) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   contribution_->TipPublisher(
@@ -304,7 +326,8 @@ IN_PROC_BROWSER_TEST_F(
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     RecurringTipForVerifiedPublisher) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   contribution_->TipPublisher(
@@ -316,7 +339,8 @@ IN_PROC_BROWSER_TEST_F(
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     RecurringTipForUnverifiedPublisher) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   contribution_->TipPublisher(
@@ -329,8 +353,7 @@ IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     PendingContributionTip) {
   const std::string publisher = "example.com";
-
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   // Tip unverified publisher
@@ -353,12 +376,12 @@ IN_PROC_BROWSER_TEST_F(
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     ProcessPendingContributions) {
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
   response_->SetAlternativePublisherList(true);
-
-  rewards_browsertest_helper::EnableRewards(browser());
-
-  rewards_browsertest_helper::ReloadCurrentSite(browser());
-
   // Tip unverified publisher
   contribution_->TipViaCode(
       "brave.com",
@@ -398,8 +421,10 @@ IN_PROC_BROWSER_TEST_F(
   // Refresh publisher list
   RefreshPublisherListUsingRewardsPopup();
 
-  // Activate the Rewards settings page tab
-  rewards_browsertest_util::ActivateTabAtIndex(browser(), 0);
+  // Load rewards page
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
 
   // Wait for new verified publisher to be processed
   contribution_->WaitForMultipleTipReconcileCompleted(3);
@@ -448,7 +473,8 @@ IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     TipWithVerifiedWallet) {
   response_->SetVerifiedWallet(true);
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->SetUpUpholdWallet(rewards_service_, 50.0);
 
   const double amount = 5.0;
@@ -464,7 +490,8 @@ IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     MultipleTipsProduceMultipleFeesWithVerifiedWallet) {
   response_->SetVerifiedWallet(true);
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->SetUpUpholdWallet(rewards_service_, 50.0);
 
   double total_amount = 0.0;
@@ -503,7 +530,8 @@ IN_PROC_BROWSER_TEST_F(
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     TipConnectedPublisherAnon) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   const double amount = 5.0;
@@ -519,7 +547,8 @@ IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     TipConnectedPublisherAnonAndConnected) {
   response_->SetVerifiedWallet(true);
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->SetUpUpholdWallet(rewards_service_, 50.0);
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
@@ -536,12 +565,16 @@ IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     TipConnectedPublisherConnected) {
   response_->SetVerifiedWallet(true);
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->SetUpUpholdWallet(
       rewards_service_,
       50.0,
       ledger::type::WalletStatus::CONNECTED);
-  rewards_browsertest_helper::ReloadCurrentSite(browser());
+
+  rewards_browsertest_helper::LoadURL(
+      browser(),
+      rewards_browsertest_util::GetRewardsUrl());
 
   const double amount = 5.0;
   contribution_->TipViaCode(
@@ -563,9 +596,13 @@ IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     TipConnectedPublisherVerified) {
   response_->SetVerifiedWallet(true);
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->SetUpUpholdWallet(rewards_service_, 50.0);
-  rewards_browsertest_helper::ReloadCurrentSite(browser());
+
+  rewards_browsertest_helper::LoadURL(
+      browser(),
+      rewards_browsertest_util::GetRewardsUrl());
 
   const double amount = 5.0;
   contribution_->TipViaCode(
@@ -585,7 +622,8 @@ IN_PROC_BROWSER_TEST_F(
 
 // Ensure that we can make a one-time tip of a non-integral amount.
 IN_PROC_BROWSER_TEST_F(RewardsContributionBrowserTest, TipNonIntegralAmount) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   rewards_service_->OnTip("duckduckgo.com", 2.5, false);
@@ -598,7 +636,12 @@ IN_PROC_BROWSER_TEST_F(RewardsContributionBrowserTest, TipNonIntegralAmount) {
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     RecurringTipNonIntegralAmount) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_service_->SetAutoContributeEnabled(true);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   const bool verified = true;
@@ -618,7 +661,12 @@ IN_PROC_BROWSER_TEST_F(
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     RecurringAndPartialAutoContribution) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_service_->SetAutoContributeEnabled(true);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   // Visit verified publisher
@@ -665,8 +713,12 @@ IN_PROC_BROWSER_TEST_F(
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     MultipleRecurringOverBudgetAndPartialAutoContribution) {
-  rewards_browsertest_helper::EnableRewards(browser());
-
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
+  rewards_service_->SetAutoContributeEnabled(true);
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
   contribution_->TipViaCode(
       "duckduckgo.com",
       5.0,
@@ -727,7 +779,12 @@ IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     SplitProcessorAutoContribution) {
   response_->SetVerifiedWallet(true);
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
+  rewards_service_->SetAutoContributeEnabled(true);
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
   contribution_->SetUpUpholdWallet(rewards_service_, 50.0);
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
@@ -794,7 +851,9 @@ IN_PROC_BROWSER_TEST_F(
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     CheckIfReconcileWasReset) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
+  rewards_service_->SetAutoContributeEnabled(true);
   uint64_t current_stamp = 0;
 
   base::RunLoop run_loop_first;
@@ -828,10 +887,9 @@ IN_PROC_BROWSER_TEST_F(
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     CheckIfReconcileWasResetACOff) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   uint64_t current_stamp = 0;
-
-  rewards_service_->SetAutoContributeEnabled(false);
 
   base::RunLoop run_loop_first;
   rewards_service_->GetReconcileStamp(
@@ -859,7 +917,8 @@ IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     SplitProcessOneTimeTip) {
   response_->SetVerifiedWallet(true);
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->SetUpUpholdWallet(rewards_service_, 50.0);
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
@@ -871,7 +930,10 @@ IN_PROC_BROWSER_TEST_F(
       2,
       1);
 
-  rewards_browsertest_util::ActivateTabAtIndex(browser(), 0);
+  // Load rewards page
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
 
   rewards_browsertest_util::WaitForElementThenClick(
       contents(),
@@ -897,7 +959,8 @@ IN_PROC_BROWSER_TEST_F(
 IN_PROC_BROWSER_TEST_F(
     RewardsContributionBrowserTest,
     PanelDefaultMonthlyTipChoices) {
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
+  rewards_browsertest_util::CreateWallet(rewards_service_);
   contribution_->AddBalance(promotion_->ClaimPromotionViaCode());
 
   rewards_browsertest_util::NavigateToPublisherPage(

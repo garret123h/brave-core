@@ -89,19 +89,19 @@ class RewardsPromotionBrowserTest : public InProcessBrowserTest {
   }
 
   double ClaimPromotion(bool use_panel, const bool should_finish = true) {
-    // Wait for promotion to initialize
-    promotion_->WaitForPromotionInitialization();
-
     // Use the appropriate WebContents
     content::WebContents* contents = use_panel
         ? rewards_browsertest_helper::OpenRewardsPopup(browser())
         : browser()->tab_strip_model()->GetActiveWebContents();
 
+    // Wait for promotion to initialize
+    promotion_->WaitForPromotionInitialization();
+
     // Claim promotion via settings page or panel, as instructed
     if (use_panel) {
       rewards_browsertest_util::WaitForElementThenClick(
           contents,
-          "button");
+          "#panel-notifications");
     } else {
       rewards_browsertest_util::WaitForElementThenClick(
           contents,
@@ -188,15 +188,14 @@ class RewardsPromotionBrowserTest : public InProcessBrowserTest {
 };
 
 IN_PROC_BROWSER_TEST_F(RewardsPromotionBrowserTest, ClaimViaSettingsPage) {
-  rewards_browsertest_helper::EnableRewards(browser());
-
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
   double balance = ClaimPromotion(false);
   ASSERT_EQ(balance, 30.0);
 }
 
 IN_PROC_BROWSER_TEST_F(RewardsPromotionBrowserTest, ClaimViaPanel) {
-  rewards_browsertest_util::EnableRewardsViaCode(browser(), rewards_service_);
-
   double balance = ClaimPromotion(true);
   ASSERT_EQ(balance, 30.0);
 }
@@ -205,7 +204,7 @@ IN_PROC_BROWSER_TEST_F(
     RewardsPromotionBrowserTest,
     PromotionHasEmptyPublicKey) {
   response_->SetPromotionEmptyKey(true);
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
 
   promotion_->WaitForPromotionInitialization();
   rewards_browsertest_util::WaitForElementToAppear(
@@ -216,7 +215,7 @@ IN_PROC_BROWSER_TEST_F(
 
 IN_PROC_BROWSER_TEST_F(RewardsPromotionBrowserTest, PromotionGone) {
   gone_ = true;
-  rewards_browsertest_helper::EnableRewards(browser());
+  rewards_browsertest_util::StartProcess(rewards_service_);
 
   promotion_->WaitForPromotionInitialization();
   ClaimPromotion(true, false);
@@ -226,8 +225,9 @@ IN_PROC_BROWSER_TEST_F(RewardsPromotionBrowserTest, PromotionGone) {
 IN_PROC_BROWSER_TEST_F(
     RewardsPromotionBrowserTest,
     PromotionRemovedFromEndpoint) {
-  rewards_browsertest_helper::EnableRewards(browser());
-
+  rewards_browsertest_helper::LoadURL(
+        browser(),
+        rewards_browsertest_util::GetRewardsUrl());
   promotion_->WaitForPromotionInitialization();
   removed_ = true;
   rewards_browsertest_helper::ReloadCurrentSite(browser());
