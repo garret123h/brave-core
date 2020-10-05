@@ -7,6 +7,7 @@
 
 #include "brave/browser/search/ntp_utils.h"
 #include "brave/browser/themes/brave_dark_mode_utils.h"
+#include "brave/browser/tor/buildflags.h"
 #include "brave/browser/ui/omnibox/brave_omnibox_client_impl.h"
 #include "brave/common/pref_names.h"
 #include "brave/components/binance/browser/buildflags/buildflags.h"
@@ -79,6 +80,10 @@
 
 #if BUILDFLAG(ENABLE_SPEEDREADER)
 #include "brave/components/speedreader/speedreader_service.h"
+#endif
+
+#if BUILDFLAG(ENABLE_TOR)
+#include "brave/browser/tor/tor_profile_service.h"
 #endif
 
 #if defined(OS_ANDROID)
@@ -285,6 +290,10 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
 
 #if BUILDFLAG(MOONPAY_ENABLED)
   moonpay::MoonpayPrefUtils::RegisterPrefs(registry);
+#endif
+
+#if BUILDFLAG(ENABLE_TOR)
+  tor::TorProfileService::RegisterPrefs(registry);
 #endif
 
 #if !defined(OS_ANDROID)
