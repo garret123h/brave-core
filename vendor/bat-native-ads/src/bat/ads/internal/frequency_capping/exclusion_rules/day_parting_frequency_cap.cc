@@ -54,7 +54,7 @@ bool DayPartingFrequencyCap::DoesRespectCap(
   uint64_t end_time;
   std::vector<std::string> parsed_day_part;
 
-  for (const std::string& day_part : DayPartingFrequencyCap::ParseDayPartList(ad.day_parts)) {
+  for (const std::string& day_part : ad.day_parts) {
       parsed_day_part = DayPartingFrequencyCap::ParseDayPart(day_part);
       days_of_week = parsed_day_part[0];
       start_time = std::stoi(parsed_day_part[1]);
@@ -99,24 +99,6 @@ std::vector<std::string> DayPartingFrequencyCap::ParseDayPart(
       day_part.erase(0, pos + delimiter.length());
   }
   list.push_back(day_part);
-  return list;
-}
-
-std::vector<std::string> DayPartingFrequencyCap::ParseDayPartList(
-    std::string day_parts) const {
-  std::vector<std::string> list;
-  size_t pos = 0;
-  std::string token;
-  std::string delimiter = ",";
-
-  while ((pos = day_parts.find(delimiter)) != std::string::npos) {
-      token = day_parts.substr(0, pos);
-      list.push_back(token);
-      day_parts.erase(0, pos + delimiter.length());
-  }
-  if (!day_parts.empty()) {
-    list.push_back(day_parts);
-  }
   return list;
 }
 
