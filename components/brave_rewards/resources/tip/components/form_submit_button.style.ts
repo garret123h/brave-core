@@ -8,18 +8,18 @@ export const root = styled.div`
   button {
     width: 100%;
     padding: 19px 0;
-
     cursor: pointer;
     border: none;
     background: var(--brave-color-brandBatInteracting);
     font-size: 14px;
     line-height: 21px;
     font-weight: 600;
-    color: #fff;
+    color: var(--brave-palette-white);
+    outline: 0;
   }
 
   button:active {
-    background: #686fdc;
+    background: var(--brave-palette-blurple400);
   }
 
   .icon {

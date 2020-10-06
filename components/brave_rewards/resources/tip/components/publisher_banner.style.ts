@@ -17,11 +17,10 @@ export const root = styled.div`
   justify-content: center;
   padding: 64px 12px 10px;
   height: 100%;
-
-  color: #fff;
-
-  background-color: #212529;
+  color: var(--brave-palette-white);
+  background-color: var(--brave-palette-neutral900);
   background-size: cover;
+  background-repeat: no-repeat;
   background-position: center;
   background-image: url('${background1}');
 
@@ -61,8 +60,7 @@ export const verifiedIcon = styled.div`
   position: absolute;
   top: 3px;
   left: -12px;
-
-  color: #AEB1C2;
+  color: var(--brave-palette-grey500);
 
   &.verified {
     color: var(--brave-color-brandBatInteracting);
@@ -78,15 +76,8 @@ export const logoMask = styled.div`
   width: 82px;
   text-align: center;
   overflow: hidden;
-
-  background: #fff;
   border-radius: 50%;
-  text-align: center;
-  color: var(--brave-color-brandBrave);
-  text-transform: uppercase;
-  font-size: 52px;
-  font-weight: 600;
-  line-height: 82px;
+  border: solid 2px rgba(255, 255, 255, .5);
 
   > img {
     object-fit: cover;
@@ -94,9 +85,19 @@ export const logoMask = styled.div`
   }
 `
 
+export const logoLetter = styled.div`
+  background: var(--brave-palette-white);
+  height: 100%;
+  color: var(--brave-color-brandBrave);
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 52px;
+  font-weight: 600;
+  line-height: 82px;
+`
+
 export const name = styled.div`
   flex: 1 1 auto;
-
   font-size: 22px;
   line-height: 33px;
   font-weight: 600;
@@ -122,9 +123,8 @@ export const socialLinks = styled.div`
     height: 25px;
     padding: 4px;
     margin: 0 5px;
-
     border-radius: 50%;
-    background: #fff;
+    background: var(--brave-palette-white);
   }
 `
 
@@ -134,10 +134,9 @@ export const unverifiedNotice = styled.div`
   margin-bottom: -12px;
   display: flex;
   align-items: center;
-
   font-size: 12px;
-  background: #fff;
-  color: #000;
+  background: var(--brave-palette-white);
+  color: var(--brave-palette-black);
   border-radius: 8px;
 `
 
@@ -146,7 +145,7 @@ export const unverifiedNoticeIcon = styled.div`
   margin-left: -4px;
   margin-right: 10px;
   height: 32px;
-  color: #5DB5FC;
+  color: var(--brave-palette-blue400);
 `
 
 export const unverifiedNoticeText = styled.div`
@@ -154,13 +153,12 @@ export const unverifiedNoticeText = styled.div`
 
   a {
     font-weight: 600;
-    color: #72b4f6;
+    color: var(--brave-palette-blue400);
   }
 `
 
 export const title = styled.div`
   margin-top: 28px;
-
   font-size: 18px;
   line-height: 26px;
 `

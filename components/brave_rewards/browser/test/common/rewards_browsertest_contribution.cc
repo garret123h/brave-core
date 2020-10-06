@@ -163,7 +163,7 @@ void RewardsBrowserTestContribution::TipPublisher(
     rewards_browsertest_util::WaitForElementToContain(
         site_banner_contents,
         "body",
-        base::StringPrintf("%.0f BAT", amount));
+        base::StringPrintf("%.3f BAT", amount));
   }
 
   const bool is_monthly =

@@ -7,7 +7,6 @@ import styled from 'styled-components'
 export const root = styled.div`
   margin: 0 auto;
   max-width: 150px;
-
   --button-switch-padding: 3px 0;
 `
 

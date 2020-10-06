@@ -15,32 +15,32 @@ export const option = styled.div`
   button {
     width: 100%;
     padding: var(--button-switch-padding, 6px 0);
-
     font-size: 12px;
     line-height: 21px;
     border-radius: 30px;
     border: 1px solid rgba(115, 122, 222, 0.55);
-    background: #fff;
+    background: var(--brave-palette-white);
     color: var(--brave-color-brandBatInteracting);
     cursor: pointer;
+    outline: 0;
   }
 
-  button:active {
+  button:active, button:focus {
     background: var(--brave-color-brandBatActive);
+    color: var(--brave-color-brandBatInteracting);
   }
 
   &.selected button {
     background: var(--brave-color-brandBatInteracting);
-    color: #fff;
+    color: var(--brave-palette-white);
     cursor: default;
   }
 `
 
 export const caption = styled.div`
   margin-top: 5px;
-
   text-align: center;
   font-size: 12px;
   line-height: 18px;
-  color: #686978;
+  color: var(--brave-palette-grey700);
 `

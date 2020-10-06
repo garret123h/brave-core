@@ -21,7 +21,6 @@ export const main = styled.div`
 export const amounts = styled.div`
   padding-top: 24px;
   margin-top: 11px;
-
   border-top: 1px solid rgba(174, 177, 194, 0.5);
 }
 `
@@ -31,9 +30,8 @@ export const footer = styled.div``
 export const addFunds = styled.div`
   padding: 19px 0;
   text-align: center;
-
-  color: #fff;
-  background: #868E96;
+  color: var(--brave-palette-white);
+  background: var(--brave-palette-neutral600);
   font-size: 14px;
   line-height: 21px;
   font-weight: 600;
@@ -49,5 +47,5 @@ export const sadIcon = styled.span`
   width: 22px;
   vertical-align: middle;
   margin: -1.5px 2px 0 0;
-  color: #DADADA;
+  color: var(--brave-palette-neutral300);
 `

@@ -38,9 +38,10 @@ export function App () {
   })
 
   function onMount (element: HTMLElement | null) {
-    if (element) {
-      injectThemeVariables(element)
+    if (!element) {
+      return
     }
+    injectThemeVariables(element)
   }
 
   return (

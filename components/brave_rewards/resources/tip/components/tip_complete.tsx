@@ -9,6 +9,7 @@ import { TwitterColorIcon } from 'brave-ui/components/icons'
 import { TipKind } from '../lib/interfaces'
 import { HostContext } from '../lib/host_context'
 import { LocaleContext } from '../lib/locale_context'
+import { formatTokenAmount } from '../lib/formatting'
 
 import { BatString } from './bat_string'
 
@@ -43,8 +44,7 @@ export function TipComplete (props: Props) {
     })
   }, [host])
 
-  const amountString = props.tipAmount.toFixed(
-    Math.floor(props.tipAmount) === props.tipAmount ? 0 : 3)
+  const amountString = formatTokenAmount(props.tipAmount)
 
   function onShareClick () {
     host.shareTip('twitter')

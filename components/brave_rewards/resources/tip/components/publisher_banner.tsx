@@ -10,7 +10,8 @@ import {
   TwitterColorIcon,
   TwitchColorIcon,
   GitHubColorIcon,
-  YoutubeColorIcon
+  YoutubeColorIcon,
+  VimeoColorIcon
 } from 'brave-ui/components/icons'
 
 import {
@@ -49,13 +50,12 @@ function getLogo (publisherInfo: PublisherInfo) {
   if (logoURL) {
     return <img src={logoURL} />
   }
-  if (publisherInfo.name) {
-    return publisherInfo.name[0]
-  }
-  if (publisherInfo.publisherKey) {
-    return publisherInfo.publisherKey[0]
-  }
-  return ''
+  const name = publisherInfo.name || publisherInfo.publisherKey
+  return (
+    <style.logoLetter>
+      {name ? name[0] : ''}
+    </style.logoLetter>
+  )
 }
 
 function getProviderName (publisherInfo: PublisherInfo) {
@@ -108,6 +108,7 @@ function getSocialIcon (type: string) {
     case 'twitch': return <TwitchColorIcon />
     case 'github': return <GitHubColorIcon />
     case 'reddit': return <RedditColorIcon />
+    case 'vimeo': return <VimeoColorIcon />
     default: return null
   }
 }
@@ -189,11 +190,28 @@ function getUnverifiedNotice (
         <strong>{getString('siteBannerNoticeNote')}</strong>&nbsp;
         {text}&nbsp;
         <NewTabLink href='https://brave.com/faq/#unclaimed-funds'>
-          {getString('unVerifiedTextMore')}
+          {getString('unverifiedTextMore')}
         </NewTabLink>
       </style.unverifiedNoticeText>
     </style.unverifiedNotice>
   )
+}
+
+function getPostRelativeTime (postDate: Date) {
+  // TS does not yet recongnize RelativeTimeFormatter (since chromium 71)
+  const { RelativeTimeFormat } = Intl as any
+  const formatter = new RelativeTimeFormat()
+  const sec = Math.max(0, Date.now() - postDate.getTime()) / 1000
+  if (sec < 60) {
+    return formatter.format(-Math.round(sec), 'second')
+  }
+  if (sec < 60 * 60) {
+    return formatter.format(-Math.round(sec / 60), 'minute')
+  }
+  if (sec < 60 * 60 * 24) {
+    return formatter.format(-Math.round(sec / 60 / 60), 'hour')
+  }
+  return ''
 }
 
 function getPostTimeString (postTimestamp: string) {
@@ -201,6 +219,10 @@ function getPostTimeString (postTimestamp: string) {
   const invalidDate = !Number(postDate)
   if (invalidDate) {
     return postTimestamp
+  }
+  const relative = getPostRelativeTime(postDate)
+  if (relative) {
+    return relative
   }
   return postDate.toLocaleDateString(undefined, {
     month: 'short',
@@ -220,12 +242,8 @@ function getDescription (
 
   if (mediaMetaData.mediaType === 'twitter') {
     const postTime = getPostTimeString(mediaMetaData.postTimestamp)
-    const message = getString(mediaMetaData.postText
-      ? 'tweetTipTitle'
-      : 'tweetTipTitleEmpty')
-    const title = formatLocaleTemplate(message, {
-      // The localized message for twitter contains a "@" before the screen name
-      user: getSocialScreenName(mediaMetaData).replace(/^@/, '')
+    const title = formatLocaleTemplate(getString('postHeaderTwitter'), {
+      user: publisherInfo.name
     })
     return (
       <MediaCard title={title} postTime={postTime} icon={<TwitterColorIcon />}>
@@ -235,18 +253,12 @@ function getDescription (
   }
 
   if (mediaMetaData.mediaType === 'reddit') {
-    const message = getString(mediaMetaData.postText
-      ? 'redditTipTitle'
-      : 'redditTipTitleEmpty')
-    const title = formatLocaleTemplate(message, {
-      user: getSocialScreenName(mediaMetaData)
+    const postTime = getPostTimeString(mediaMetaData.postRelDate)
+    const title = formatLocaleTemplate(getString('postHeader'), {
+      user: publisherInfo.name
     })
     return (
-      <MediaCard
-        title={title}
-        postTime={mediaMetaData.postRelDate}
-        icon={<RedditColorIcon />}
-      >
+      <MediaCard title={title} postTime={postTime} icon={<RedditColorIcon />}>
         {mediaMetaData.postText}
       </MediaCard>
     )
@@ -273,7 +285,7 @@ function getBackgroundClass (publisherInfo: PublisherInfo) {
   }
 
   // Vary the background type by publisher key and day
-  let hash = hashString(
+  const hash = hashString(
     publisherInfo.publisherKey + '-' +
     Math.floor(Date.now() / 1000 / 60 / 60 / 24))
 

@@ -9,7 +9,5 @@ export interface Locale {
 }
 
 export const LocaleContext = React.createContext<Locale>({
-  getString (key: string) {
-    return ''
-  }
+  getString: () => ''
 })

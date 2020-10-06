@@ -6,13 +6,12 @@ import * as React from 'react'
 
 import { HostContext } from '../lib/host_context'
 import { LocaleContext } from '../lib/locale_context'
-import { StringKey } from '../lib/interfaces'
 
 interface Props {
-  stringKey?: StringKey
+  stringKey?: string
 }
 
-function mapOnlyAnonWalletKey (key: StringKey) {
+function mapOnlyAnonWalletKey (key: string) {
   switch (key) {
     case 'bat': return 'bap'
     case 'batFunds': return 'bapFunds'

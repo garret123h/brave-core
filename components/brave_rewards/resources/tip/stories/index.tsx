@@ -21,7 +21,7 @@ function getMediaMetaData (type: MediaType): MediaMetaData {
         mediaType: 'twitter',
         publisherName: 'brave',
         postId: '1234',
-        postTimestamp: new Date().toString(),
+        postTimestamp: new Date(Date.now() - 6000000).toString(),
         postText: 'It\'s all bravey baby'
       }
     case 'github':

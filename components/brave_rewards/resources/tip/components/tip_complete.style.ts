@@ -30,7 +30,6 @@ export const header = styled.div`
   padding-top: 63px;
   padding-bottom: 9px;
   text-align: center;
-
   border-bottom: 1px solid rgba(174, 177, 194, 0.5);
   font-weight: 600;
   font-size: 22px;
@@ -40,17 +39,15 @@ export const header = styled.div`
 export const message = styled.div`
   padding-top: 46px;
   text-align: center;
-
   font-weight: 600;
   font-size: 16px;
   line-height: 24px;
-  color: #212529;
+  color: var(--brave-palette-neutral900);
 `
 
 export const table = styled.div`
   margin-top: 17px;
   text-align: left;
-
   font-size: 14px;
   line-height: 21px;
 
@@ -77,9 +74,9 @@ export const share = styled.div`
     font-weight: 600;
     font-size: 13px;
     line-height: 19px;
-    color: #fff;
+    color: var(--brave-palette-white);
     border: none;
-    background: #5CB5FC;
+    background: var(--brave-palette-blue400);
     border-radius: 20.5px;
     text-align: center;
   }
@@ -95,17 +92,15 @@ export const cancelMain = styled.div`
 
 export const cancelHeader = styled.div`
   margin-top: 152px;
-
   font-weight: 600;
   font-size: 16px;
   line-height: 24px;
-  color: #212529;
+  color: var(--brave-palette-neutral900);
 `
 
 export const cancelText = styled.div`
   margin: 24px 53px 0;
-
-  color: #212529;
+  color: var(--brave-palette-neutral900);
 `
 
 export const shareIcon = styled.span`
@@ -116,6 +111,6 @@ export const shareIcon = styled.span`
   margin-right: 5px;
 
   * {
-    fill: #fff;
+    fill: var(--brave-palette-white);
   }
 `

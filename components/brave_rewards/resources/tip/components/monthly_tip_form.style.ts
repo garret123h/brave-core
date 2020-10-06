@@ -21,7 +21,6 @@ export const main = styled.div`
 export const amounts = styled.div`
   padding-top: 24px;
   margin-top: 11px;
-
   border-top: 1px solid rgba(174, 177, 194, 0.5);
 }
 `

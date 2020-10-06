@@ -101,54 +101,6 @@ export interface RewardsParameters {
   monthlyTipChoices: number[]
 }
 
-export type StringKey =
-  'addFunds' |
-  'bap' |
-  'bapFunds' |
-  'bat' |
-  'batFunds' |
-  'cancel' |
-  'cancelConfirmationText' |
-  'cancelMonthlyContribution' |
-  'changeAmount' |
-  'confirmCancel' |
-  'contributionAmount' |
-  'contributionCanceled' |
-  'currentlySupporting' |
-  'currentMonthlyContribution' |
-  'doMonthly' |
-  'errorHasOccurred' |
-  'githubTipTitle' |
-  'githubTipTitleEmpty' |
-  'monthlyContributionSet' |
-  'monthlyText' |
-  'nextContributionDate' |
-  'notEnoughTokens' |
-  'notEnoughTokensLink' |
-  'on' |
-  'oneTimeTip' |
-  'oneTimeTipAmount' |
-  'points' |
-  'redditTipTitle' |
-  'redditTipTitleEmpty' |
-  'rewardsBannerText1' |
-  'sendDonation' |
-  'siteBannerConnectedText' |
-  'siteBannerNoticeNote' |
-  'siteBannerNoticeText' |
-  'sorryToSeeYouGo' |
-  'supportThisCreator' |
-  'termsOfService' |
-  'thanksForTheSupport' |
-  'tipHasBeenSent' |
-  'tipPostSubtitle' |
-  'tokens' |
-  'tweetAboutSupport' |
-  'tweetTipTitle' |
-  'tweetTipTitleEmpty' |
-  'unVerifiedTextMore' |
-  'welcome'
-
 export interface HostError {
   type: string
   code?: number
@@ -171,7 +123,7 @@ export type HostListener = (state: HostState) => void
 
 export interface Host {
   state: HostState
-  getString: (key: StringKey) => string
+  getString: (key: string) => string
   getDialogArgs: () => DialogArgs
   closeDialog: () => void
   processTip: (amount: number, kind: TipKind) => void

@@ -8,6 +8,9 @@ export function injectThemeVariables (element: HTMLElement) {
   for (const [key, value] of Object.entries(defaultTheme.color)) {
     element.style.setProperty(`--brave-color-${key}`, String(value))
   }
+  for (const [key, value] of Object.entries(defaultTheme.palette)) {
+    element.style.setProperty(`--brave-palette-${key}`, String(value))
+  }
   for (const [key, value] of Object.entries(defaultTheme.fontFamily)) {
     element.style.setProperty(`--brave-font-${key}`, String(value))
   }

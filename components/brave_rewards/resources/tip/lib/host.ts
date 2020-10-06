@@ -14,8 +14,7 @@ import {
   DialogArgs,
   EntryPoint,
   TipKind,
-  ShareTarget,
-  StringKey
+  ShareTarget
 } from './interfaces'
 
 interface RecurringTipInfo {
@@ -143,6 +142,10 @@ export function createHost (): Host {
       if (data.result === 0) {
         chrome.send('fetchBalance')
       }
+    },
+
+    unblindedTokensReady () {
+      chrome.send('fetchBalance')
     }
 
   })
@@ -157,7 +160,7 @@ export function createHost (): Host {
       return stateManager.getState()
     },
 
-    getString (key: StringKey) {
+    getString (key: string) {
       return self.loadTimeData.getString(key)
     },
 
