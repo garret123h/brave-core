@@ -15,12 +15,13 @@
 #include "base/observer_list.h"
 #include "build/build_config.h"
 #include "brave/components/brave_ads/browser/ads_service_observer.h"
+#include "brave/vendor/bat-native-ads/include/bat/ads/mojom.h"
 #include "components/keyed_service/core/keyed_service.h"
 #include "components/sessions/core/session_id.h"
 #include "url/gurl.h"
 
 namespace ads {
-struct AdsHistory;
+struct PublisherAdInfo;
 }
 
 namespace base {
@@ -32,6 +33,13 @@ class PrefRegistrySyncable;
 }
 
 namespace brave_ads {
+
+using OnGetPublisherAdsCallback = base::OnceCallback<void(const std::string&,
+    const std::vector<std::string>&, const base::ListValue&)>;
+using OnGetPublisherAdsToPreCacheCallback =
+    base::OnceCallback<void(const base::ListValue&)>;
+using OnCanShowPublisherAdsCallback = base::OnceCallback<void(
+    const std::string&, const bool)>;
 
 using OnGetAdsHistoryCallback =
     base::OnceCallback<void(const base::ListValue&)>;
@@ -77,13 +85,10 @@ class AdsService : public KeyedService {
   virtual uint64_t GetAdsPerDay() const = 0;
 
   virtual bool ShouldAllowAdsSubdivisionTargeting() const = 0;
-
   virtual std::string GetAdsSubdivisionTargetingCode() const = 0;
   virtual void SetAdsSubdivisionTargetingCode(
       const std::string& subdivision_targeting_code) = 0;
-
-  virtual std::string
-  GetAutoDetectedAdsSubdivisionTargetingCode() const = 0;
+  virtual std::string GetAutoDetectedAdsSubdivisionTargetingCode() const = 0;
   virtual void SetAutoDetectedAdsSubdivisionTargetingCode(
       const std::string& subdivision_targeting_code) = 0;
 
@@ -111,6 +116,9 @@ class AdsService : public KeyedService {
 
   virtual void ReconcileAdRewards() = 0;
 
+  virtual void OnUserModelUpdated(
+      const std::string& id) = 0;
+
   virtual void GetAdsHistory(
       const uint64_t from_timestamp,
       const uint64_t to_timestamp,
@@ -118,6 +126,19 @@ class AdsService : public KeyedService {
 
   virtual void GetTransactionHistory(
       GetTransactionHistoryCallback callback) = 0;
+
+  virtual void GetPublisherAds(
+      const std::string& url,
+      const std::vector<std::string>& sizes,
+      OnGetPublisherAdsCallback callback) = 0;
+  virtual void OnPublisherAdEvent(
+      const ads::PublisherAdInfo& publisher_ad,
+      const ads::PublisherAdEventType event_type) = 0;
+  virtual void GetPublisherAdsToPreCache(
+      OnGetPublisherAdsToPreCacheCallback callback) = 0;
+  virtual void CanShowPublisherAds(
+      const std::string& url,
+      OnCanShowPublisherAdsCallback callback) = 0;
 
   virtual void ToggleAdThumbUp(
       const std::string& creative_instance_id,
@@ -150,9 +171,6 @@ class AdsService : public KeyedService {
 
   virtual void ResetAllState(
       const bool should_shutdown) = 0;
-
-  virtual void OnUserModelUpdated(
-      const std::string& id) = 0;
 
   void AddObserver(
       AdsServiceObserver* observer);

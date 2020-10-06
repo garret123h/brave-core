@@ -185,7 +185,6 @@ describe('rewards reducer', () => {
       const initState: Rewards.State = { }
       initState.adsData = {
         adsEnabled: false,
-        shouldOptOutfAdConversions: true,
         adsPerHour: 2,
         shouldAllowAdsSubdivisionTargeting: true,
         adsUIEnabled: false,

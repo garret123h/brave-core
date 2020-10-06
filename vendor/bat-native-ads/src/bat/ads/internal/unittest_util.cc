@@ -403,6 +403,8 @@ void MockDefaultPrefs(
   mock->SetUint64Pref(prefs::kAdsPerDay, 20);
   mock->SetUint64Pref(prefs::kAdsPerHour, 2);
   mock->SetBooleanPref(prefs::kEnabled, true);
+  mock->SetBooleanPref(
+      prefs::kShouldShowPublisherAdsOnParticipatingSites, true);
   mock->SetBooleanPref(prefs::kShouldAllowAdConversionTracking, true);
   mock->SetBooleanPref(prefs::kShouldAllowAdsSubdivisionTargeting, false);
   mock->SetStringPref(prefs::kAdsSubdivisionTargetingCode, "AUTO");

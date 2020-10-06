@@ -133,6 +133,22 @@ class AdsServiceImpl : public AdsService,
   void GetTransactionHistory(
       GetTransactionHistoryCallback callback) override;
 
+  void GetPublisherAds(
+      const std::string& url,
+      const std::vector<std::string>& sizes,
+      OnGetPublisherAdsCallback callback) override;
+
+  void GetPublisherAdsToPreCache(
+      OnGetPublisherAdsToPreCacheCallback callback) override;
+
+  void CanShowPublisherAds(
+      const std::string& url,
+      OnCanShowPublisherAdsCallback callback) override;
+
+  void OnPublisherAdEvent(
+      const ads::PublisherAdInfo& info,
+      const ads::PublisherAdEventType event_type) override;
+
   void ToggleAdThumbUp(
       const std::string& creative_instance_id,
       const std::string& creative_set_id,
@@ -267,6 +283,21 @@ class AdsServiceImpl : public AdsService,
       GetTransactionHistoryCallback callback,
       const bool success,
       const std::string& json);
+
+  void OnGetPublisherAds(
+      OnGetPublisherAdsCallback callback,
+      const std::string& url,
+      const std::vector<std::string>& sizes,
+      const std::string& json);
+
+  void OnGetPublisherAdsToPreCache(
+      OnGetPublisherAdsToPreCacheCallback callback,
+      const std::string& json);
+
+  void OnCanShowPublisherAds(
+      OnCanShowPublisherAdsCallback callback,
+      const std::string& url,
+      const bool can_show);
 
   void OnRemoveAllHistory(
       const int32_t result);

@@ -54,6 +54,9 @@ void AdsService::RegisterProfilePrefs(
       ads::prefs::kEnabled, false);
 
   registry->RegisterBooleanPref(
+      ads::prefs::kShouldShowPublisherAdsOnParticipatingSites, true);
+
+  registry->RegisterBooleanPref(
       ads::prefs::kShouldAllowAdConversionTracking, true);
 
   registry->RegisterUint64Pref(
