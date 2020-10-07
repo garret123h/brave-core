@@ -42,10 +42,12 @@ const handledByGreaselion = (url: URL) => {
     return false
   }
 
-  return url.hostname.endsWith('.youtube.com') ||
-         url.hostname === 'youtube.com' ||
+  return url.hostname.endsWith('.reddit.com') ||
+         url.hostname === 'reddit.com' ||
          url.hostname.endsWith('.twitter.com') ||
-         url.hostname === 'twitter.com'
+         url.hostname === 'twitter.com' ||
+         url.hostname.endsWith('.youtube.com') ||
+         url.hostname === 'youtube.com'
 }
 
 export const rewardsPanelReducer: Reducer<RewardsExtension.State | undefined> = (state: RewardsExtension.State, action: any) => {

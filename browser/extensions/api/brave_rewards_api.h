@@ -139,20 +139,6 @@ class BraveRewardsTipGitHubUserFunction : public ExtensionFunction {
   void OnGitHubPublisherInfoSaved(ledger::type::PublisherInfoPtr publisher);
 };
 
-class BraveRewardsTipRedditUserFunction : public ExtensionFunction {
- public:
-  BraveRewardsTipRedditUserFunction();
-  DECLARE_EXTENSION_FUNCTION("braveRewards.tipRedditUser", UNKNOWN)
-
- protected:
-  ~BraveRewardsTipRedditUserFunction() override;
-
-  ResponseAction Run() override;
- private:
-  base::WeakPtrFactory<BraveRewardsTipRedditUserFunction> weak_factory_;
-  void OnRedditPublisherInfoSaved(ledger::type::PublisherInfoPtr publisher);
-};
-
 class BraveRewardsGetPublisherDataFunction : public ExtensionFunction {
  public:
   DECLARE_EXTENSION_FUNCTION("braveRewards.getPublisherData", UNKNOWN)

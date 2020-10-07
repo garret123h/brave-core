@@ -66,31 +66,11 @@ const tipGitHubMedia = (mediaMetaData: RewardsTip.MediaMetaData) => {
   })
 }
 
-const tipRedditMedia = (mediaMetaData: RewardsTip.MediaMetaData) => {
-  mediaMetaData.mediaType = 'reddit'
-  chrome.tabs.query({
-    active: true,
-    windowId: chrome.windows.WINDOW_ID_CURRENT
-  }, (tabs) => {
-    if (!tabs || tabs.length === 0) {
-      return
-    }
-    const tabId = tabs[0].id
-    if (tabId === undefined) {
-      return
-    }
-    chrome.braveRewards.tipRedditUser(tabId, mediaMetaData)
-  })
-}
-
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   const action = typeof msg === 'string' ? msg : msg.type
   switch (action) {
     case 'tipInlineMedia': {
       switch (msg.mediaMetaData.mediaType) {
-        case 'reddit':
-          tipRedditMedia(msg.mediaMetaData)
-          break
         case 'github':
           tipGitHubMedia(msg.mediaMetaData)
           break

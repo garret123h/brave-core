@@ -39,10 +39,10 @@ class TipMediaUser extends React.Component<Props, {}> {
         `@${mediaMetaData.publisherName}`,
         mediaMetaData.postId)
     } else if (mediaMetaData.mediaType === 'reddit') {
-      let name = this.props.publisher.name
+      const name = this.props.publisher.name
       this.actions.onTweet(name, '')
     } else if (mediaMetaData.mediaType === 'github') {
-      let name = this.props.publisher.name
+      const name = this.props.publisher.name
       this.actions.onTweet(name, '')
     }
     this.actions.onCloseDialog()
@@ -75,7 +75,7 @@ class TipMediaUser extends React.Component<Props, {}> {
         mediaMetaData.postText.length > 0
           ? 'redditTipTitle'
           : 'redditTipTitleEmpty'
-      publisher.title = getLocale(key, { user: 'u/' + mediaMetaData.userName })
+      publisher.title = getLocale(key, { user: 'u/' + mediaMetaData.publisherScreenName })
     } else if (mediaMetaData.mediaType === 'github') {
       const key = mediaMetaData.userName ? 'githubTipTitle' : 'githubTipTitleEmpty'
       publisher.title = getLocale(key, { user: '@' + mediaMetaData.userName })

@@ -132,7 +132,7 @@ class Banner extends React.Component<Props, State> {
     if (mediaMetaData.mediaType === 'twitter') {
       return `@${mediaMetaData.publisherName}`
     } else if (mediaMetaData.mediaType === 'reddit') {
-      return `u/${mediaMetaData.userName}`
+      return `u/${mediaMetaData.publisherScreenName}`
     } else if (mediaMetaData.mediaType === 'github') {
       return `@${mediaMetaData.userName}`
     }
@@ -180,7 +180,7 @@ class Banner extends React.Component<Props, State> {
         mediaType={'reddit'}
         mediaText={mediaMetaData.postText}
         mediaTimestamp={0}
-        mediaTimetext={mediaMetaData.postRelDate}
+        mediaTimetext={mediaMetaData.postTimestamp}
       />)
   }
 
