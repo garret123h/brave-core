@@ -688,6 +688,14 @@ if (!is_android) {
       sources += [ "//brave/browser/speedreader/speedreader_browsertest.cc" ]
     }
 
+    if (ipfs_enabled) {
+      sources += [ "//brave/browser/ipfs/ipfs_tab_helper_browsertest.cc" ]
+      deps += [
+        "//brave/components/ipfs/browser",
+        "//brave/components/ipfs/common",
+      ]
+    }
+
     if (is_win || is_linux) {
       sources += [ "//brave/browser/renderer_context_menu/brave_spelling_options_submenu_observer_browsertest.cc" ]
     }
