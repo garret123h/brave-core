@@ -289,7 +289,7 @@ int CreativeAdNotifications::BindParameters(
     BindString(command, index++, creative_ad_notification.title);
     BindString(command, index++, creative_ad_notification.body);
     BindDouble(command, index++, creative_ad_notification.ptr);
-    BindString(command, index++, creative_ad_notification.day_parts);
+//    BindString(command, index++, creative_ad_notification.day_parts);
 
     count++;
   }
@@ -398,7 +398,7 @@ CreativeAdNotifications::GetCreativeAdNotificationFromRecord(
   info.title = ColumnString(record, 14);
   info.body = ColumnString(record, 15);
   info.ptr = ColumnDouble(record, 16);
-  info.day_parts = ColumnString(record, 17);
+  info.day_parts.push_back(ColumnString(record, 17));
 
   return info;
 }
