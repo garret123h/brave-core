@@ -22,6 +22,8 @@ using UrlRequest = mojom::BraveAdsUrlRequest;
 using UrlRequestPtr = mojom::BraveAdsUrlRequestPtr;
 using UrlRequestMethod = mojom::BraveAdsUrlRequestMethod;
 
+using P2AEventType = mojom::BraveAdsP2AEventType;
+
 using UrlResponse = mojom::BraveAdsUrlResponse;
 using UrlResponsePtr = mojom::BraveAdsUrlResponsePtr;
 
