@@ -21,6 +21,7 @@ import {
 } from '../../components/default'
 import * as Page from '../../components/default/page'
 import BrandedWallpaperLogo from '../../components/default/brandedWallpaper/logo'
+import { brandedWallpaperLogoClicked } from '../../api/brandedWallpaper'
 
 // Helpers
 import VisibilityTimer from '../../helpers/visibilityTimer'
@@ -449,6 +450,10 @@ class NewTabPage extends React.Component<Props, State> {
     this.setState({
       showSettingsMenu: !this.state.showSettingsMenu
     })
+  }
+
+  onClickLogo = () => {
+    brandedWallpaperLogoClicked(this.props.newTabData.brandedWallpaperData)
   }
 
   toggleSettingsAddCard = () => {
@@ -1038,6 +1043,7 @@ class NewTabPage extends React.Component<Props, State> {
                 menuPosition={'right'}
                 paddingType={'default'}
                 textDirection={newTabData.textDirection}
+                onClickLogo={this.onClickLogo}
                 data={newTabData.brandedWallpaperData.logo}
               />
             </Page.GridItemBrandedLogo>}
