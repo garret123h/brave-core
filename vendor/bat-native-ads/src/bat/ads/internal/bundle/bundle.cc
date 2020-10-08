@@ -118,17 +118,17 @@ std::unique_ptr<BundleState> Bundle::GenerateFromCatalog(
     }
 
     // Day Parting
-    std::vector<std::string> day_parts;
+    std::vector<std::string> dayparts;
     // Converts this to a form of
     // "DOW_STARTTIME_ENDTIME"
-    for (const auto& day_part : campaign.day_parts) {
-      std::string day_part_stringified = day_part.dow +
+    for (const auto& daypart : campaign.dayparts) {
+      std::string daypart_stringified = daypart.dow +
           "_" +
-          std::to_string(day_part.start_minute) +
+          std::to_string(daypart.start_minute) +
           "_" +
-          std::to_string(day_part.end_minute);
+          std::to_string(daypart.end_minute);
 
-      day_parts.push_back(day_part_stringified);
+      dayparts.push_back(daypart_stringified);
     }
 
     // Creative Sets
@@ -184,7 +184,7 @@ std::unique_ptr<BundleState> Bundle::GenerateFromCatalog(
             creative_set.ad_conversions.size() != 0 ? true : false;
         info.per_day = creative_set.per_day;
         info.total_max = creative_set.total_max;
-        info.day_parts = day_parts;
+        info.dayparts = dayparts;
         info.geo_targets = geo_targets;
         info.title = creative.payload.title;
         info.body = creative.payload.body;

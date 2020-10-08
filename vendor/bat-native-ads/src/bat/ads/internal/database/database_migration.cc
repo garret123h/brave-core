@@ -14,6 +14,7 @@
 #include "bat/ads/internal/database/tables/ad_conversions_database_table.h"
 #include "bat/ads/internal/database/tables/categories_database_table.h"
 #include "bat/ads/internal/database/tables/creative_ad_notifications_database_table.h"
+#include "bat/ads/internal/database/tables/dayparts_database_table.h"
 #include "bat/ads/internal/database/tables/geo_targets_database_table.h"
 #include "bat/ads/internal/logging.h"
 
@@ -74,6 +75,9 @@ void Migration::ToVersion(
 
   table::GeoTargets geo_targets_database_table(ads_);
   geo_targets_database_table.Migrate(transaction, to_version);
+
+  table::Dayparts dayparts_database_table(ads_);
+  dayparts_database_table.Migrate(transaction, to_version);
 }
 
 }  // namespace database

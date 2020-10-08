@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef BAT_ADS_INTERNAL_FREQUENCY_CAPPING_EXCLUSION_RULES_DAY_PARTING_FREQUENCY_CAP_H_  // NOLINT
-#define BAT_ADS_INTERNAL_FREQUENCY_CAPPING_EXCLUSION_RULES_DAY_PARTING_FREQUENCY_CAP_H_  // NOLINT
+#ifndef BAT_ADS_INTERNAL_FREQUENCY_CAPPING_EXCLUSION_RULES_DAYPART_FREQUENCY_CAP_H_  // NOLINT
+#define BAT_ADS_INTERNAL_FREQUENCY_CAPPING_EXCLUSION_RULES_DAYPART_FREQUENCY_CAP_H_  // NOLINT
 
 #include <string>
 #include <vector>
@@ -16,23 +16,24 @@ namespace ads {
 
 class AdsImpl;
 
-class DayPartingFrequencyCap : public ExclusionRule {
+class DaypartFrequencyCap : public ExclusionRule {
  public:
-  DayPartingFrequencyCap(
+  DaypartFrequencyCap(
       const AdsImpl* const ads);
 
-  ~DayPartingFrequencyCap() override;
+  ~DaypartFrequencyCap() override;
 
-  DayPartingFrequencyCap(
-      const DayPartingFrequencyCap&) = delete;
-  DayPartingFrequencyCap& operator=(
-      const DayPartingFrequencyCap&) = delete;
+  DaypartFrequencyCap(
+      const DaypartFrequencyCap&) = delete;
+  DaypartFrequencyCap& operator=(
+      const DaypartFrequencyCap&) = delete;
 
   bool ShouldExclude(
       const CreativeAdInfo& ad) override;
 
   std::string get_last_message() const override;
 
+  static std::vector<std::string> ParseDaypart(std::string daypart);
  private:
   const AdsImpl* const ads_;  // NOT OWNED
 
@@ -49,7 +50,6 @@ class DayPartingFrequencyCap : public ExclusionRule {
       const uint64_t start_time,
       const uint64_t end_time) const;
 
-  std::vector<std::string> ParseDayPart(std::string day_part) const;
   std::string GetCurrentDayOfWeek() const;
   uint64_t GetCurrentLocalMinutesFromStart() const;
 };

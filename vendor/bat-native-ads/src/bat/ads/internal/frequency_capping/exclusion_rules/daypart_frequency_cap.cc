@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "bat/ads/internal/frequency_capping/exclusion_rules/day_parting_frequency_cap.h"
+#include "bat/ads/internal/frequency_capping/exclusion_rules/daypart_frequency_cap.h"
 
 #include <string>
 #include <vector>
@@ -15,15 +15,15 @@
 
 namespace ads {
 
-DayPartingFrequencyCap::DayPartingFrequencyCap(
+DaypartFrequencyCap::DaypartFrequencyCap(
     const AdsImpl* const ads)
     : ads_(ads) {
   DCHECK(ads_);
 }
 
-DayPartingFrequencyCap::~DayPartingFrequencyCap() = default;
+DaypartFrequencyCap::~DaypartFrequencyCap() = default;
 
-bool DayPartingFrequencyCap::ShouldExclude(
+bool DaypartFrequencyCap::ShouldExclude(
     const CreativeAdInfo& ad) {
   if (!DoesRespectCap(ad)) {
     last_message_ = base::StringPrintf("creativeSetId %s excluded as not "
@@ -35,33 +35,33 @@ bool DayPartingFrequencyCap::ShouldExclude(
   return false;
 }
 
-std::string DayPartingFrequencyCap::get_last_message() const {
+std::string DaypartFrequencyCap::get_last_message() const {
   return last_message_;
 }
 
-bool DayPartingFrequencyCap::DoesRespectCap(
+bool DaypartFrequencyCap::DoesRespectCap(
     const CreativeAdInfo& ad) const {
   // If there's no day part specified, let it be displayed
-  if (ad.day_parts.empty()) {
+  if (ad.dayparts.empty()) {
     return true;
   }
 
-  std::string current_dow = DayPartingFrequencyCap::GetCurrentDayOfWeek();
+  std::string current_dow = DaypartFrequencyCap::GetCurrentDayOfWeek();
   std::string days_of_week;
   uint64_t current_minutes_from_start =
-    DayPartingFrequencyCap::GetCurrentLocalMinutesFromStart();
+    DaypartFrequencyCap::GetCurrentLocalMinutesFromStart();
   uint64_t start_time;
   uint64_t end_time;
-  std::vector<std::string> parsed_day_part;
+  std::vector<std::string> parsed_daypart;
 
-  for (const std::string& day_part : ad.day_parts) {
-      parsed_day_part = DayPartingFrequencyCap::ParseDayPart(day_part);
-      days_of_week = parsed_day_part[0];
-      start_time = std::stoi(parsed_day_part[1]);
-      end_time = std::stoi(parsed_day_part[2]);
+  for (const std::string& daypart : ad.dayparts) {
+      parsed_daypart = DaypartFrequencyCap::ParseDaypart(daypart);
+      days_of_week = parsed_daypart[0];
+      start_time = std::stoi(parsed_daypart[1]);
+      end_time = std::stoi(parsed_daypart[2]);
 
-      if (DayPartingFrequencyCap::HasDayOfWeekMatch(current_dow, days_of_week)
-          && DayPartingFrequencyCap::HasTimeSlotMatch(
+      if (DaypartFrequencyCap::HasDayOfWeekMatch(current_dow, days_of_week)
+          && DaypartFrequencyCap::HasTimeSlotMatch(
               current_minutes_from_start,
               start_time,
               end_time)) {
@@ -71,13 +71,13 @@ bool DayPartingFrequencyCap::DoesRespectCap(
   return false;
 }
 
-bool DayPartingFrequencyCap::HasDayOfWeekMatch(
+bool DaypartFrequencyCap::HasDayOfWeekMatch(
     const std::string& current_dow,
     const std::string& days_of_week) const {
   return days_of_week.find(current_dow) != std::string::npos;
 }
 
-bool DayPartingFrequencyCap::HasTimeSlotMatch(
+bool DaypartFrequencyCap::HasTimeSlotMatch(
     const uint64_t current_minutes_from_start,
     const uint64_t start_time,
     const uint64_t end_time) const {
@@ -86,30 +86,30 @@ bool DayPartingFrequencyCap::HasTimeSlotMatch(
       current_minutes_from_start <= end_time;
 }
 
-std::vector<std::string> DayPartingFrequencyCap::ParseDayPart(
-    std::string day_part) const {
+std::vector<std::string> DaypartFrequencyCap::ParseDaypart(
+    std::string daypart) {
   std::vector<std::string> list;
   size_t pos = 0;
   std::string token;
   std::string delimiter = "_";
 
-  while ((pos = day_part.find(delimiter)) != std::string::npos) {
-      token = day_part.substr(0, pos);
+  while ((pos = daypart.find(delimiter)) != std::string::npos) {
+      token = daypart.substr(0, pos);
       list.push_back(token);
-      day_part.erase(0, pos + delimiter.length());
+      daypart.erase(0, pos + delimiter.length());
   }
-  list.push_back(day_part);
+  list.push_back(daypart);
   return list;
 }
 
-std::string DayPartingFrequencyCap::GetCurrentDayOfWeek() const {
+std::string DaypartFrequencyCap::GetCurrentDayOfWeek() const {
   auto now = base::Time::Now();
   base::Time::Exploded exploded;
   now.LocalExplode(&exploded);
   return base::NumberToString(exploded.day_of_week);
 }
 
-uint64_t DayPartingFrequencyCap::GetCurrentLocalMinutesFromStart() const {
+uint64_t DaypartFrequencyCap::GetCurrentLocalMinutesFromStart() const {
   auto now = base::Time::Now();
   base::Time::Exploded exploded;
   now.LocalExplode(&exploded);

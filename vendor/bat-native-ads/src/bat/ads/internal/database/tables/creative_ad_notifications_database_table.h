@@ -15,6 +15,7 @@
 #include "bat/ads/internal/bundle/creative_ad_notification_info.h"
 #include "bat/ads/internal/database/database_table.h"
 #include "bat/ads/internal/database/tables/categories_database_table.h"
+#include "bat/ads/internal/database/tables/dayparts_database_table.h"
 #include "bat/ads/internal/database/tables/geo_targets_database_table.h"
 #include "bat/ads/mojom.h"
 #include "bat/ads/result.h"
@@ -97,6 +98,7 @@ class CreativeAdNotifications : public Table {
   AdsImpl* ads_;  // NOT OWNED
 
   std::unique_ptr<GeoTargets> geo_targets_database_table_;
+  std::unique_ptr<Dayparts> dayparts_database_table_;
   std::unique_ptr<Categories> categories_database_table_;
 };
 

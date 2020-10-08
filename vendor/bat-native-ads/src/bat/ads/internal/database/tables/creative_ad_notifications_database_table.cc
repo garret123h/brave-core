@@ -38,6 +38,7 @@ CreativeAdNotifications::CreativeAdNotifications(
     : batch_size_(kDefaultBatchSize),
       ads_(ads),
       geo_targets_database_table_(std::make_unique<GeoTargets>(ads_)),
+      dayparts_database_table_(std::make_unique<Dayparts>(ads_)),
       categories_database_table_(std::make_unique<Categories>(ads_)) {
   DCHECK(ads_);
 }
@@ -64,6 +65,7 @@ void CreativeAdNotifications::Save(
   for (const auto& batch : batches) {
     InsertOrUpdate(transaction.get(), batch);
     geo_targets_database_table_->InsertOrUpdate(transaction.get(), batch);
+    dayparts_database_table_->InsertOrUpdate(transaction.get(), batch);
     categories_database_table_->InsertOrUpdate(transaction.get(), batch);
   }
 
@@ -92,18 +94,22 @@ void CreativeAdNotifications::GetCreativeAdNotifications(
           "can.conversion, "
           "can.per_day, "
           "can.total_max, "
-          "can.day_parts, "
           "c.category, "
           "gt.geo_target, "
           "can.target_url, "
           "can.title, "
           "can.body, "
           "can.ptr "
+          "dayparts.days_of_week, "
+          "dayparts.start_minute, "
+          "dayparts.end_minute, "
       "FROM %s AS can "
           "INNER JOIN categories AS c "
               "ON c.creative_instance_id = can.creative_instance_id "
           "INNER JOIN geo_targets AS gt "
               "ON gt.creative_instance_id = can.creative_instance_id "
+          "INNER JOIN dayparts "
+              "ON dayparts.creative_instance_id = can.creative_instance_id "
       "WHERE c.category IN %s "
           "AND %s BETWEEN can.start_at_timestamp AND can.end_at_timestamp",
       get_table_name().c_str(),
@@ -138,7 +144,9 @@ void CreativeAdNotifications::GetCreativeAdNotifications(
     DBCommand::RecordBindingType::STRING_TYPE,  // title
     DBCommand::RecordBindingType::STRING_TYPE,  // body
     DBCommand::RecordBindingType::DOUBLE_TYPE,  // ptr
-    DBCommand::RecordBindingType::STRING_TYPE   // day_parts
+    DBCommand::RecordBindingType::STRING_TYPE,  // dayparts->days_of_week
+    DBCommand::RecordBindingType::INT_TYPE,     // dayparts->start_minute
+    DBCommand::RecordBindingType::INT_TYPE      // dayparts->end_minute
   };
 
   DBTransactionPtr transaction = DBTransaction::New();
@@ -170,12 +178,14 @@ void CreativeAdNotifications::GetAllCreativeAdNotifications(
           "can.title, "
           "can.body, "
           "can.ptr, "
-          "can.day_parts "
+          "can.dayparts "
       "FROM %s AS can "
           "INNER JOIN categories AS c "
               "ON c.creative_instance_id = can.creative_instance_id "
           "INNER JOIN geo_targets AS gt "
               "ON gt.creative_instance_id = can.creative_instance_id "
+          "INNER JOIN dayparts "
+              "ON dayparts.creative_instance_id = can.creative_instance_id "
       "WHERE %s BETWEEN can.start_at_timestamp AND can.end_at_timestamp",
       get_table_name().c_str(),
       NowAsString().c_str());
@@ -202,7 +212,7 @@ void CreativeAdNotifications::GetAllCreativeAdNotifications(
     DBCommand::RecordBindingType::STRING_TYPE,  // title
     DBCommand::RecordBindingType::STRING_TYPE,  // body
     DBCommand::RecordBindingType::DOUBLE_TYPE,  // ptr
-    DBCommand::RecordBindingType::STRING_TYPE,  // day_parts
+    DBCommand::RecordBindingType::STRING_TYPE,  // dayparts
   };
 
   DBTransactionPtr transaction = DBTransaction::New();
@@ -289,7 +299,6 @@ int CreativeAdNotifications::BindParameters(
     BindString(command, index++, creative_ad_notification.title);
     BindString(command, index++, creative_ad_notification.body);
     BindDouble(command, index++, creative_ad_notification.ptr);
-//    BindString(command, index++, creative_ad_notification.day_parts);
 
     count++;
   }
@@ -318,10 +327,9 @@ std::string CreativeAdNotifications::BuildInsertOrUpdateQuery(
           "target_url, "
           "title, "
           "body, "
-          "ptr, "
-          "day_parts) VALUES %s",
+          "ptr) VALUES %s",
       get_table_name().c_str(),
-      BuildBindingParameterPlaceholders(16, count).c_str());
+      BuildBindingParameterPlaceholders(15, count).c_str());
 }
 
 void CreativeAdNotifications::OnGetCreativeAdNotifications(
@@ -398,7 +406,7 @@ CreativeAdNotifications::GetCreativeAdNotificationFromRecord(
   info.title = ColumnString(record, 14);
   info.body = ColumnString(record, 15);
   info.ptr = ColumnDouble(record, 16);
-  info.day_parts.push_back(ColumnString(record, 17));
+  info.dayparts.push_back(ColumnString(record, 17));
 
   return info;
 }
@@ -407,6 +415,7 @@ void CreativeAdNotifications::DeleteAllTables(
     DBTransaction* transaction) const {
   Delete(transaction, get_table_name());
   Delete(transaction, geo_targets_database_table_->get_table_name());
+  Delete(transaction, dayparts_database_table_->get_table_name());
   Delete(transaction, categories_database_table_->get_table_name());
 }
 
@@ -430,7 +439,6 @@ void CreativeAdNotifications::CreateTableV1(
           "target_url TEXT NOT NULL, "
           "title TEXT NOT NULL, "
           "body TEXT NOT NULL, "
-          "day_parts TEXT NOT NULL, "
           "PRIMARY KEY(creative_instance_id))",
       get_table_name().c_str());
 

@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "bat/ads/internal/frequency_capping/exclusion_rules/day_parting_frequency_cap.h"
+#include "bat/ads/internal/frequency_capping/exclusion_rules/daypart_frequency_cap.h"
 
 #include <memory>
 
@@ -36,9 +36,9 @@ const char kCreativeSetId[] = "654f10df-fbc4-4a92-8d43-2edf73734a60";
 
 }  // namespace
 
-class BatAdsDayPartingFrequencyCapTest : public ::testing::Test {
+class BatAdsDaypartFrequencyCapTest : public ::testing::Test {
  protected:
-  BatAdsDayPartingFrequencyCapTest()
+  BatAdsDaypartFrequencyCapTest()
       : ads_client_mock_(std::make_unique<NiceMock<AdsClientMock>>()),
         ads_(std::make_unique<AdsImpl>(ads_client_mock_.get())),
         locale_helper_mock_(std::make_unique<
@@ -46,13 +46,13 @@ class BatAdsDayPartingFrequencyCapTest : public ::testing::Test {
         platform_helper_mock_(std::make_unique<
             NiceMock<PlatformHelperMock>>()),
         frequency_cap_(std::make_unique<
-            DayPartingFrequencyCap>(ads_.get())) {
+            DaypartFrequencyCap>(ads_.get())) {
     // You can do set-up work for each test here
 
     PlatformHelper::GetInstance()->set_for_testing(platform_helper_mock_.get());
   }
 
-  ~BatAdsDayPartingFrequencyCapTest() override {
+  ~BatAdsDaypartFrequencyCapTest() override {
     // You can do clean-up work that doesn't throw exceptions here
   }
 
@@ -102,11 +102,11 @@ class BatAdsDayPartingFrequencyCapTest : public ::testing::Test {
   std::unique_ptr<AdsImpl> ads_;
   std::unique_ptr<brave_l10n::LocaleHelperMock> locale_helper_mock_;
   std::unique_ptr<PlatformHelperMock> platform_helper_mock_;
-  std::unique_ptr<DayPartingFrequencyCap> frequency_cap_;
+  std::unique_ptr<DaypartFrequencyCap> frequency_cap_;
   std::unique_ptr<Database> database_;
 };
 
-TEST_F(BatAdsDayPartingFrequencyCapTest, AllowIfDayPartsIsEmpty) {
+TEST_F(BatAdsDaypartFrequencyCapTest, AllowIfDaypartsIsEmpty) {
   // Arrange
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -118,7 +118,7 @@ TEST_F(BatAdsDayPartingFrequencyCapTest, AllowIfDayPartsIsEmpty) {
   EXPECT_FALSE(should_exclude);
 }
 
-TEST_F(BatAdsDayPartingFrequencyCapTest, AllowIfRightDayAndHours) {
+TEST_F(BatAdsDaypartFrequencyCapTest, AllowIfRightDayAndHours) {
   // Arrange
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -127,7 +127,7 @@ TEST_F(BatAdsDayPartingFrequencyCapTest, AllowIfRightDayAndHours) {
   base::Time::Now().LocalExplode(&exploded);
   int current_time = 60 * exploded.hour + exploded.minute;
 
-  ad.day_parts.push_back(
+  ad.dayparts.push_back(
       base::NumberToString(exploded.day_of_week) + "_" +
       base::NumberToString(current_time - base::Time::kMinutesPerHour) + "_" +
       base::NumberToString(current_time + base::Time::kMinutesPerHour));
@@ -138,7 +138,7 @@ TEST_F(BatAdsDayPartingFrequencyCapTest, AllowIfRightDayAndHours) {
   EXPECT_FALSE(should_exclude);
 }
 
-TEST_F(BatAdsDayPartingFrequencyCapTest, AllowForMultipleDays) {
+TEST_F(BatAdsDaypartFrequencyCapTest, AllowForMultipleDays) {
   // Arrange
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -147,7 +147,7 @@ TEST_F(BatAdsDayPartingFrequencyCapTest, AllowForMultipleDays) {
   base::Time::Now().LocalExplode(&exploded);
   int current_time = 60 * exploded.hour + exploded.minute;
 
-  ad.day_parts.push_back(
+  ad.dayparts.push_back(
       std::string("0123456") + "_" +
       base::NumberToString(current_time - base::Time::kMinutesPerHour) + "_" +
       base::NumberToString(current_time + base::Time::kMinutesPerHour));
@@ -158,7 +158,7 @@ TEST_F(BatAdsDayPartingFrequencyCapTest, AllowForMultipleDays) {
   EXPECT_FALSE(should_exclude);
 }
 
-TEST_F(BatAdsDayPartingFrequencyCapTest, AllowIfOneMatchExists) {
+TEST_F(BatAdsDaypartFrequencyCapTest, AllowIfOneMatchExists) {
   // Arrange
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -169,17 +169,17 @@ TEST_F(BatAdsDayPartingFrequencyCapTest, AllowIfOneMatchExists) {
   std::string tomorrow_dow = base::NumberToString((exploded.day_of_week + 1) % 7);
   std::string current_dow = base::NumberToString(exploded.day_of_week);
 
-  ad.day_parts.push_back(
+  ad.dayparts.push_back(
       tomorrow_dow + "_" +
       base::NumberToString(current_time - 60) + "_" +
       base::NumberToString(current_time + 60) + ",");
 
-  ad.day_parts.push_back(
+  ad.dayparts.push_back(
       tomorrow_dow + "_" +
       base::NumberToString(current_time + 120) + "_" +
       base::NumberToString(current_time + 180) + ",");
 
-  ad.day_parts.push_back(
+  ad.dayparts.push_back(
       current_dow + "_" +
       base::NumberToString(current_time - 60) + "_" +
       base::NumberToString(current_time + 60) + ",");
@@ -190,7 +190,7 @@ TEST_F(BatAdsDayPartingFrequencyCapTest, AllowIfOneMatchExists) {
   EXPECT_FALSE(should_exclude);
 }
 
-TEST_F(BatAdsDayPartingFrequencyCapTest, DisallowIfNoMatches) {
+TEST_F(BatAdsDaypartFrequencyCapTest, DisallowIfNoMatches) {
   // Arrange
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -201,17 +201,17 @@ TEST_F(BatAdsDayPartingFrequencyCapTest, DisallowIfNoMatches) {
   std::string tomorrow_dow = base::NumberToString((exploded.day_of_week + 1) % 7);
   std::string current_dow = base::NumberToString(exploded.day_of_week);
 
-  ad.day_parts.push_back(
+  ad.dayparts.push_back(
       tomorrow_dow + "_" +
       base::NumberToString(current_time - 60) + "_" +
       base::NumberToString(current_time + 60) + ",");
 
-  ad.day_parts.push_back(
+  ad.dayparts.push_back(
       tomorrow_dow + "_" +
       base::NumberToString(current_time + 120) + "_" +
       base::NumberToString(current_time + 180) + ",");
 
-  ad.day_parts.push_back(
+  ad.dayparts.push_back(
       current_dow + "_" +
       base::NumberToString(current_time + 60) + "_" +
       base::NumberToString(current_time + 120) + ",");
@@ -224,7 +224,7 @@ TEST_F(BatAdsDayPartingFrequencyCapTest, DisallowIfNoMatches) {
 }
 
 
-TEST_F(BatAdsDayPartingFrequencyCapTest, DisallowIfWrongDay) {
+TEST_F(BatAdsDaypartFrequencyCapTest, DisallowIfWrongDay) {
   // Arrange
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -236,10 +236,10 @@ TEST_F(BatAdsDayPartingFrequencyCapTest, DisallowIfWrongDay) {
   // Go to next day
   std::string tomorrow_dow = base::NumberToString((exploded.day_of_week + 1) % 7);
 
-  ad.day_parts =
+  ad.dayparts.push_back(
       tomorrow_dow + "_" +
       base::NumberToString(current_time - 60) + "_" +
-      base::NumberToString(current_time + 60) + ",";
+      base::NumberToString(current_time + 60) + ",");
   // Act
   const bool should_exclude = frequency_cap_->ShouldExclude(ad);
 
@@ -247,7 +247,7 @@ TEST_F(BatAdsDayPartingFrequencyCapTest, DisallowIfWrongDay) {
   EXPECT_TRUE(should_exclude);
 }
 
-TEST_F(BatAdsDayPartingFrequencyCapTest, DisallowIfWrongHours) {
+TEST_F(BatAdsDaypartFrequencyCapTest, DisallowIfWrongHours) {
   // Arrange
   CreativeAdInfo ad;
   ad.creative_set_id = kCreativeSetId;
@@ -259,10 +259,10 @@ TEST_F(BatAdsDayPartingFrequencyCapTest, DisallowIfWrongHours) {
   // Go to next day
   std::string tomorrow_dow = base::NumberToString((exploded.day_of_week + 1) % 7);
 
-  ad.day_parts =
+  ad.dayparts.push_back(
       tomorrow_dow + "_" +
       base::NumberToString(current_time - 60) + "_" +
-      base::NumberToString(current_time + 60) + ",";
+      base::NumberToString(current_time + 60) + ",");
   // Act
   const bool should_exclude = frequency_cap_->ShouldExclude(ad);
 
