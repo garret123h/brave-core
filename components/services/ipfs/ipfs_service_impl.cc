@@ -13,6 +13,7 @@
 #include <sys/wait.h>
 #endif
 
+#include <initializer_list>
 #include <utility>
 
 #include "base/command_line.h"
@@ -73,6 +74,33 @@ static void TearDownPipeHack() {
     close(pipehack[i]);
 }
 #endif
+
+bool LaunchProcessAndExit(const base::FilePath& path,
+                          std::initializer_list<std::string> args,
+                          const base::LaunchOptions& options) {
+  base::CommandLine cmdline(path);
+  for (auto arg : args)
+    cmdline.AppendArg(arg);
+  base::Process process = base::LaunchProcess(cmdline, options);
+  if (!process.IsValid()) {
+    return false;
+  }
+
+  int exit_code = 0;
+  if (!process.WaitForExit(&exit_code)) {
+    VLOG(0) << "Failed to wait the process, cmd: "
+            << cmdline.GetCommandLineString();
+    process.Close();
+    return false;
+  }
+
+  if (exit_code) {
+    VLOG(0) << "Failed at running cmd: " << cmdline.GetCommandLineString();
+    return false;
+  }
+
+  return true;
+}
 
 }  // namespace
 
@@ -140,24 +168,21 @@ void IpfsServiceImpl::Launch(mojom::IpfsConfigPtr config,
   base::FilePath config_path = config->config_path;
   if (!base::PathExists(config_path)) {
     // run ipfs init to gen config
-    base::CommandLine args(config->binary_path);
-    args.AppendArg("init");
-    base::Process init_process = base::LaunchProcess(args, options);
-    if (!init_process.IsValid()) {
-      std::move(callback).Run(false, init_process.Pid());
+    if (!LaunchProcessAndExit(config->binary_path, {"init"}, options)) {
+      std::move(callback).Run(false, -1);
       return;
     }
+  }
 
-    int exit_code = 0;
-    if (!init_process.WaitForExit(&exit_code)) {
-      VLOG(0) << "Failed to wait init process";
-      init_process.Close();
-      std::move(callback).Run(false, init_process.Pid());
-      return;
-    }
-    if (exit_code) {
-      VLOG(0) << "Failed at running init";
-      std::move(callback).Run(false, init_process.Pid());
+  std::initializer_list<std::initializer_list<std::string>> config_args = {
+      {"config", "Addresses.API", "/ip4/127.0.0.1/tcp/45001"},
+      {"config", "Addresses.Gateway", "/ip4/127.0.0.1/tcp/48080"},
+      {"config", "profile", "apply", "randomports"}  // for swarm addresses
+  };
+
+  for (auto args : config_args) {
+    if (!LaunchProcessAndExit(config->binary_path, args, options)) {
+      std::move(callback).Run(false, -1);
       return;
     }
   }
