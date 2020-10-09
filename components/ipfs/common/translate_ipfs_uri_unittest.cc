@@ -58,7 +58,7 @@ TEST_F(IPFSBraveContentBrowserClientTest, TranslateIPFSURIIPFSSchemeLocal) {
   ASSERT_TRUE(
       ipfs::TranslateIPFSURI(url, &new_url, true));
   EXPECT_EQ(new_url, GURL(
-      "http://127.0.0.1:8080/ipfs/"
+      "http://127.0.0.1:48080/ipfs/"
       "QmfM2r8seH2GiRaC4esTjeraXEachRt8ZsSeGaWTPLyMoG"));
 }
 
@@ -68,7 +68,7 @@ TEST_F(IPFSBraveContentBrowserClientTest, TranslateIPFSURIIPNSSchemeLocal) {
   ASSERT_TRUE(
       ipfs::TranslateIPFSURI(url, &new_url, true));
   EXPECT_EQ(new_url, GURL(
-      "http://127.0.0.1:8080/ipns/"
+      "http://127.0.0.1:48080/ipns/"
       "QmSrPmbaUKA3ZodhzPWZnpFgcPMFWF4QsxXbkWfEptTBJd"));
 }
 
