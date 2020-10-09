@@ -468,10 +468,10 @@ static_library("browser_tests_runner") {
 }
 
 if (!is_android) {
-group("other_browser_tests") {
-  testonly = true
-  deps = [ "//brave/browser:browser_tests" ]
-}
+  group("other_browser_tests") {
+    testonly = true
+    deps = [ "//brave/browser:browser_tests" ]
+  }
 
   test("brave_browser_tests") {
     testonly = true
