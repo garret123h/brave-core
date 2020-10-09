@@ -14,7 +14,7 @@
 #include "brave/browser/tor/buildflags.h"
 #include "brave/common/brave_paths.h"
 #include "brave/components/brave_ads/browser/ads_service_factory.h"
-#include "brave/components/ipfs/browser/buildflags/buildflags.h"
+#include "brave/components/ipfs/buildflags/buildflags.h"
 #include "chrome/browser/bookmarks/bookmark_model_factory.h"
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/chrome_notification_types.h"
@@ -52,7 +52,7 @@
 #if BUILDFLAG(IPFS_ENABLED)
 #include "base/test/scoped_feature_list.h"
 #include "brave/browser/ipfs/ipfs_service_factory.h"
-#include "brave/components/ipfs/browser/features.h"
+#include "brave/components/ipfs/features.h"
 #endif
 
 namespace {
@@ -76,21 +76,16 @@ struct TestProfileData {
 std::vector<TestProfileData> GetTestProfileData(
     ProfileManager* profile_manager) {
   const std::vector<TestProfileData> profile_data = {
-    {
-      base::ASCIIToUTF16("Person 1"),
-      base::ASCIIToUTF16("Profile 1"), true,
-      profile_manager->user_data_dir().Append(
-          profile_manager->GetInitialProfileDir())},
-    {
-      base::ASCIIToUTF16("Person 2"),
-      base::ASCIIToUTF16("Profile 2"), true,
-      profile_manager->user_data_dir().Append(
-          FILE_PATH_LITERAL("testprofile2"))},
-    {
-      base::ASCIIToUTF16("ZZCustom 3"),
-      base::ASCIIToUTF16("ZZCustom 3"), false,
-      profile_manager->user_data_dir().Append(
-          FILE_PATH_LITERAL("testprofile3"))},
+      {base::ASCIIToUTF16("Person 1"), base::ASCIIToUTF16("Profile 1"), true,
+       profile_manager->user_data_dir().Append(
+           profile_manager->GetInitialProfileDir())},
+      {base::ASCIIToUTF16("Person 2"), base::ASCIIToUTF16("Profile 2"), true,
+       profile_manager->user_data_dir().Append(
+           FILE_PATH_LITERAL("testprofile2"))},
+      {base::ASCIIToUTF16("ZZCustom 3"), base::ASCIIToUTF16("ZZCustom 3"),
+       false,
+       profile_manager->user_data_dir().Append(
+           FILE_PATH_LITERAL("testprofile3"))},
   };
   return profile_data;
 }
@@ -172,8 +167,8 @@ IN_PROC_BROWSER_TEST_F(BraveProfileManagerTest, PRE_MigrateProfileNames) {
     base::RunLoop run_loop;
     profile_manager->CreateProfileAsync(
         profile_data[i].profile_path,
-        base::Bind(&OnUnblockOnProfileCreation, &run_loop),
-        base::string16(), std::string());
+        base::Bind(&OnUnblockOnProfileCreation, &run_loop), base::string16(),
+        std::string());
     run_loop.Run();
     ProfileAttributesEntry* entry;
     bool has_entry = storage.GetProfileAttributesWithPath(
@@ -189,8 +184,7 @@ IN_PROC_BROWSER_TEST_F(BraveProfileManagerTest, MigrateProfileNames) {
   ProfileAttributesStorage& storage =
       profile_manager->GetProfileAttributesStorage();
   auto profile_data = GetTestProfileData(profile_manager);
-  auto entries =
-      storage.GetAllProfilesAttributesSortedByName();
+  auto entries = storage.GetAllProfilesAttributesSortedByName();
   // Verify we still have the expected number of profiles.
   ASSERT_EQ(entries.size(), profile_data.size());
   // Order of items in entries and profile_data should be the same
@@ -198,7 +192,7 @@ IN_PROC_BROWSER_TEST_F(BraveProfileManagerTest, MigrateProfileNames) {
   for (size_t i = 0; i != entries.size(); i++) {
     // Verify the names changed
     ASSERT_EQ(entries[i]->GetName(),
-        profile_data[i].profile_name_expected_after_migration);
+              profile_data[i].profile_name_expected_after_migration);
     // Verify the path matches, i.e. it is the same profile that got the number
     // that the profile had before migration, so we're sure that profile numbers
     // aren't re-assigned.
@@ -221,18 +215,15 @@ IN_PROC_BROWSER_TEST_F(BraveProfileManagerTest,
   ASSERT_TRUE(otr_profile->IsOffTheRecord());
   ASSERT_TRUE(guest_profile->IsGuestSession());
 
-  EXPECT_NE(
-      brave_rewards::RewardsServiceFactory::GetForProfile(profile), nullptr);
-  EXPECT_EQ(
-      brave_rewards::RewardsServiceFactory::GetForProfile(otr_profile),
-      nullptr);
-  EXPECT_EQ(
-      brave_rewards::RewardsServiceFactory::GetForProfile(guest_profile),
-      nullptr);
+  EXPECT_NE(brave_rewards::RewardsServiceFactory::GetForProfile(profile),
+            nullptr);
+  EXPECT_EQ(brave_rewards::RewardsServiceFactory::GetForProfile(otr_profile),
+            nullptr);
+  EXPECT_EQ(brave_rewards::RewardsServiceFactory::GetForProfile(guest_profile),
+            nullptr);
 
   EXPECT_NE(brave_ads::AdsServiceFactory::GetForProfile(profile), nullptr);
-  EXPECT_EQ(brave_ads::AdsServiceFactory::GetForProfile(otr_profile),
-            nullptr);
+  EXPECT_EQ(brave_ads::AdsServiceFactory::GetForProfile(otr_profile), nullptr);
   EXPECT_EQ(brave_ads::AdsServiceFactory::GetForProfile(guest_profile),
             nullptr);
 

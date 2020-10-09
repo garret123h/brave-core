@@ -16,8 +16,8 @@
 #include "brave/common/webui_url_constants.h"
 #include "brave/components/brave_rewards/browser/buildflags/buildflags.h"
 #include "brave/components/brave_wallet/browser/buildflags/buildflags.h"
-#include "brave/components/ipfs/browser/buildflags/buildflags.h"
-#include "brave/components/ipfs/browser/features.h"
+#include "brave/components/ipfs/buildflags/buildflags.h"
+#include "brave/components/ipfs/features.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/common/url_constants.h"
 #include "components/prefs/pref_service.h"
@@ -30,9 +30,9 @@
 #endif
 
 #if BUILDFLAG(BRAVE_REWARDS_ENABLED)
-#include "brave/browser/ui/webui/brave_tip_ui.h"
 #include "brave/browser/ui/webui/brave_rewards_internals_ui.h"
 #include "brave/browser/ui/webui/brave_rewards_page_ui.h"
+#include "brave/browser/ui/webui/brave_tip_ui.h"
 #endif
 
 #if BUILDFLAG(BRAVE_WALLET_ENABLED)
@@ -54,12 +54,12 @@ typedef WebUIController* (*WebUIFactoryFunction)(WebUI* web_ui,
                                                  const GURL& url);
 
 // Template for defining WebUIFactoryFunction.
-template<class T>
+template <class T>
 WebUIController* NewWebUI(WebUI* web_ui, const GURL& url) {
   return new T(web_ui);
 }
 
-template<>
+template <>
 WebUIController* NewWebUI<BasicUI>(WebUI* web_ui, const GURL& url) {
   auto host = url.host_piece();
   if (host == kAdblockHost) {
@@ -68,7 +68,7 @@ WebUIController* NewWebUI<BasicUI>(WebUI* web_ui, const GURL& url) {
     return new WebcompatReporterUI(web_ui, url.host());
 #if BUILDFLAG(IPFS_ENABLED)
   } else if (host == kIPFSHost &&
-      base::FeatureList::IsEnabled(ipfs::features::kIpfsFeature)) {
+             base::FeatureList::IsEnabled(ipfs::features::kIpfsFeature)) {
     return new IPFSUI(web_ui, url.host());
 #endif  // BUILDFLAG(IPFS_ENABLED)
 #if BUILDFLAG(BRAVE_WALLET_ENABLED)
@@ -100,13 +100,12 @@ WebUIController* NewWebUI<BasicUI>(WebUI* web_ui, const GURL& url) {
 // Returns a function that can be used to create the right type of WebUI for a
 // tab, based on its URL. Returns NULL if the URL doesn't have WebUI associated
 // with it.
-WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
-                                             const GURL& url) {
+WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui, const GURL& url) {
   if (url.host_piece() == kAdblockHost ||
       url.host_piece() == kWebcompatReporterHost ||
 #if BUILDFLAG(IPFS_ENABLED)
       (url.host_piece() == kIPFSHost &&
-          base::FeatureList::IsEnabled(ipfs::features::kIpfsFeature)) ||
+       base::FeatureList::IsEnabled(ipfs::features::kIpfsFeature)) ||
 #endif  // BUILDFLAG(IPFS_ENABLED)
 #if BUILDFLAG(BRAVE_WALLET_ENABLED)
       url.host_piece() == kWalletHost ||
@@ -127,8 +126,8 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
 }
 
 #if defined(OS_ANDROID)
-bool ShouldBlockRewardsWebUI(
-      content::BrowserContext* browser_context, const GURL& url) {
+bool ShouldBlockRewardsWebUI(content::BrowserContext* browser_context,
+                             const GURL& url) {
   if (url.host_piece() != kRewardsPageHost &&
       url.host_piece() != kRewardsInternalsHost) {
     return false;
@@ -137,8 +136,7 @@ bool ShouldBlockRewardsWebUI(
     return true;
   }
   Profile* profile = Profile::FromBrowserContext(browser_context);
-  if (profile &&
-      profile->GetPrefs() &&
+  if (profile && profile->GetPrefs() &&
       profile->GetPrefs()->GetBoolean(kSafetynetCheckFailed)) {
     return true;
   }
@@ -149,7 +147,8 @@ bool ShouldBlockRewardsWebUI(
 }  // namespace
 
 WebUI::TypeID BraveWebUIControllerFactory::GetWebUIType(
-      content::BrowserContext* browser_context, const GURL& url) {
+    content::BrowserContext* browser_context,
+    const GURL& url) {
 #if defined(OS_ANDROID)
   if (ShouldBlockRewardsWebUI(browser_context, url)) {
     return WebUI::kNoWebUI;
@@ -167,21 +166,18 @@ BraveWebUIControllerFactory::CreateWebUIControllerForURL(WebUI* web_ui,
                                                          const GURL& url) {
   WebUIFactoryFunction function = GetWebUIFactoryFunction(web_ui, url);
   if (!function) {
-    return ChromeWebUIControllerFactory::CreateWebUIControllerForURL(
-        web_ui, url);
+    return ChromeWebUIControllerFactory::CreateWebUIControllerForURL(web_ui,
+                                                                     url);
   }
 
   return base::WrapUnique((*function)(web_ui, url));
 }
-
 
 // static
 BraveWebUIControllerFactory* BraveWebUIControllerFactory::GetInstance() {
   return base::Singleton<BraveWebUIControllerFactory>::get();
 }
 
-BraveWebUIControllerFactory::BraveWebUIControllerFactory() {
-}
+BraveWebUIControllerFactory::BraveWebUIControllerFactory() {}
 
-BraveWebUIControllerFactory::~BraveWebUIControllerFactory() {
-}
+BraveWebUIControllerFactory::~BraveWebUIControllerFactory() {}

@@ -31,9 +31,9 @@
 #include "brave/components/brave_sync/network_time_helper.h"
 #include "brave/components/ntp_background_images/browser/features.h"
 #include "brave/components/ntp_background_images/browser/ntp_background_images_service.h"
-#include "brave/components/p3a/buildflags.h"
 #include "brave/components/p3a/brave_histogram_rewrite.h"
 #include "brave/components/p3a/brave_p3a_service.h"
+#include "brave/components/p3a/buildflags.h"
 #include "brave/services/network/public/cpp/system_request_handler.h"
 #include "chrome/browser/component_updater/component_updater_utils.h"
 #include "chrome/browser/net/system_network_context_manager.h"
@@ -47,8 +47,8 @@
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 
 #if BUILDFLAG(ENABLE_NATIVE_NOTIFICATIONS)
-#include "chrome/browser/notifications/notification_platform_bridge.h"
 #include "brave/browser/notifications/brave_notification_platform_bridge.h"
+#include "chrome/browser/notifications/notification_platform_bridge.h"
 #endif
 
 #if BUILDFLAG(BUNDLE_WIDEVINE_CDM)
@@ -75,7 +75,7 @@
 #endif
 
 #if BUILDFLAG(IPFS_ENABLED)
-#include "brave/components/ipfs/browser/brave_ipfs_client_updater.h"
+#include "brave/components/ipfs/brave_ipfs_client_updater.h"
 #endif
 
 #if BUILDFLAG(ENABLE_SPEEDREADER)
@@ -83,8 +83,8 @@
 #endif
 
 #if defined(OS_ANDROID)
-#include "chrome/browser/flags/android/chrome_feature_list.h"
 #include "chrome/browser/android/component_updater/background_task_update_scheduler.h"
+#include "chrome/browser/flags/android/chrome_feature_list.h"
 #else
 #include "chrome/browser/ui/browser.h"
 #endif
@@ -94,8 +94,8 @@
 #endif
 
 using brave_component_updater::BraveComponent;
-using ntp_background_images::features::kBraveNTPBrandedWallpaper;
 using ntp_background_images::NTPBackgroundImagesService;
+using ntp_background_images::features::kBraveNTPBrandedWallpaper;
 
 namespace {
 
@@ -121,8 +121,9 @@ BraveBrowserProcessImpl::BraveBrowserProcessImpl(StartupData* startup_data)
   g_brave_browser_process = this;
 
 #if BUILDFLAG(ENABLE_BRAVE_REFERRALS)
-  brave_referrals_service_ = brave::BraveReferralsServiceFactory::GetInstance()
-    ->GetForPrefs(local_state());
+  brave_referrals_service_ =
+      brave::BraveReferralsServiceFactory::GetInstance()->GetForPrefs(
+          local_state());
   base::SequencedTaskRunnerHandle::Get()->PostDelayedTask(
       FROM_HERE,
       base::BindOnce(
@@ -151,8 +152,8 @@ BraveBrowserProcessImpl::BraveBrowserProcessImpl(StartupData* startup_data)
 void BraveBrowserProcessImpl::Init() {
   BrowserProcessImpl::Init();
 
-  brave_component_updater::BraveOnDemandUpdater::GetInstance()->
-      RegisterOnDemandUpdateCallback(
+  brave_component_updater::BraveOnDemandUpdater::GetInstance()
+      ->RegisterOnDemandUpdateCallback(
           base::BindRepeating(&component_updater::BraveOnDemandUpdate));
   UpdateBraveDarkMode();
   pref_change_registrar_.Add(
@@ -209,8 +210,8 @@ void BraveBrowserProcessImpl::StartBraveServices() {
   local_data_files_service()->Start();
 
 #if BUILDFLAG(ENABLE_BRAVE_SYNC)
-  brave_sync::NetworkTimeHelper::GetInstance()
-    ->SetNetworkTimeTracker(g_browser_process->network_time_tracker());
+  brave_sync::NetworkTimeHelper::GetInstance()->SetNetworkTimeTracker(
+      g_browser_process->network_time_tracker());
 #endif
 }
 
@@ -323,7 +324,8 @@ void BraveBrowserProcessImpl::OnTorEnabledChanged() {
   // Update all browsers' tor command status.
   for (Browser* browser : *BrowserList::GetInstance()) {
     static_cast<chrome::BraveBrowserCommandController*>(
-        browser->command_controller())->UpdateCommandForTor();
+        browser->command_controller())
+        ->UpdateCommandForTor();
   }
 }
 #endif
@@ -402,9 +404,8 @@ BraveBrowserProcessImpl::speedreader_rewriter_service() {
 brave_user_model::UserModelFileService*
 BraveBrowserProcessImpl::user_model_file_service() {
   if (!user_model_file_service_) {
-    user_model_file_service_.reset(
-        new brave_user_model::UserModelFileService(
-            brave_component_updater_delegate()));
+    user_model_file_service_.reset(new brave_user_model::UserModelFileService(
+        brave_component_updater_delegate()));
   }
   return user_model_file_service_.get();
 }
@@ -412,13 +413,12 @@ BraveBrowserProcessImpl::user_model_file_service() {
 #endif  // BUILDFLAG(BRAVE_ADS_ENABLED)
 
 #if BUILDFLAG(IPFS_ENABLED)
-ipfs::BraveIpfsClientUpdater*
-BraveBrowserProcessImpl::ipfs_client_updater() {
+ipfs::BraveIpfsClientUpdater* BraveBrowserProcessImpl::ipfs_client_updater() {
   if (ipfs_client_updater_)
     return ipfs_client_updater_.get();
 
-  ipfs_client_updater_ = ipfs::BraveIpfsClientUpdaterFactory(
-      brave_component_updater_delegate());
+  ipfs_client_updater_ =
+      ipfs::BraveIpfsClientUpdaterFactory(brave_component_updater_delegate());
   return ipfs_client_updater_.get();
 }
 #endif  // BUILDFLAG(IPFS_ENABLED)

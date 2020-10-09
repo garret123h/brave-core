@@ -1,7 +1,7 @@
 import("//brave/browser/translate/buildflags/buildflags.gni")
 import("//brave/components/brave_referrals/buildflags/buildflags.gni")
 import("//brave/components/brave_webtorrent/browser/buildflags/buildflags.gni")
-import("//brave/components/ipfs/browser/buildflags/buildflags.gni")
+import("//brave/components/ipfs/buildflags/buildflags.gni")
 import("//build/config/features.gni")
 
 # Refer to the keyed API spec for more details about the Brave Services Key
@@ -52,13 +52,13 @@ source_set("net") {
     "//brave/components/brave_referrals/buildflags",
     "//brave/components/brave_shields/browser",
     "//brave/components/brave_webtorrent/browser/buildflags",
-    "//brave/components/ipfs/browser/buildflags",
+    "//brave/components/ipfs/buildflags",
     "//brave/extensions:common",
+    "//components/content_settings/core/browser",
     "//components/prefs",
     "//components/user_prefs",
     "//content/public/browser",
     "//content/public/common",
-    "//components/content_settings/core/browser",
     "//extensions/common:common_constants",
     "//mojo/public/cpp/bindings",
     "//mojo/public/cpp/system",
@@ -76,9 +76,7 @@ source_set("net") {
       "ipfs_redirect_network_delegate_helper.cc",
       "ipfs_redirect_network_delegate_helper.h",
     ]
-    deps += [
-      "//brave/components/ipfs/common",
-    ]
+    deps += [ "//brave/components/ipfs" ]
   }
 
   if (enable_brave_referrals) {
@@ -87,9 +85,7 @@ source_set("net") {
       "brave_referrals_network_delegate_helper.h",
     ]
 
-    deps += [
-      "//brave/components/brave_referrals/browser",
-    ]
+    deps += [ "//brave/components/brave_referrals/browser" ]
   }
 
   if (enable_brave_webtorrent) {

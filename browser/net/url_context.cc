@@ -12,15 +12,15 @@
 #include "brave/components/brave_shields/browser/brave_shields_web_contents_observer.h"
 #include "brave/components/brave_webtorrent/browser/buildflags/buildflags.h"
 #include "brave/components/brave_webtorrent/browser/webtorrent_util.h"
-#include "brave/components/ipfs/browser/buildflags/buildflags.h"
+#include "brave/components/ipfs/buildflags/buildflags.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
 #include "chrome/browser/profiles/profile.h"
 #include "content/public/browser/browser_thread.h"
 #include "net/base/isolation_info.h"
 
 #if BUILDFLAG(IPFS_ENABLED)
-#include "brave/components/ipfs/common/pref_names.h"
-#include "brave/components/ipfs/common/ipfs_constants.h"
+#include "brave/components/ipfs/ipfs_constants.h"
+#include "brave/components/ipfs/pref_names.h"
 #include "components/prefs/testing_pref_service.h"
 #include "components/user_prefs/user_prefs.h"
 #endif
@@ -112,8 +112,8 @@ void BraveRequestInfo::FillCTX(const network::ResourceRequest& request,
   auto* map = HostContentSettingsMapFactory::GetForProfile(profile);
   ctx->allow_brave_shields =
       brave_shields::GetBraveShieldsEnabled(map, ctx->tab_origin);
-  ctx->allow_ads = brave_shields::GetAdControlType(
-      map, ctx->tab_origin) == brave_shields::ControlType::ALLOW;
+  ctx->allow_ads = brave_shields::GetAdControlType(map, ctx->tab_origin) ==
+                   brave_shields::ControlType::ALLOW;
   ctx->allow_http_upgradable_resource =
       !brave_shields::GetHTTPSEverywhereEnabled(map, ctx->tab_origin);
   ctx->allow_referrers = brave_shields::AllowReferrers(map, ctx->tab_origin);
@@ -122,8 +122,8 @@ void BraveRequestInfo::FillCTX(const network::ResourceRequest& request,
 #if BUILDFLAG(IPFS_ENABLED)
   auto* prefs = user_prefs::UserPrefs::Get(browser_context);
   ctx->ipfs_local = static_cast<ipfs::IPFSResolveMethodTypes>(
-      prefs->GetInteger(kIPFSResolveMethod)) ==
-          ipfs::IPFSResolveMethodTypes::IPFS_LOCAL;
+                        prefs->GetInteger(kIPFSResolveMethod)) ==
+                    ipfs::IPFSResolveMethodTypes::IPFS_LOCAL;
 #endif
 
   // TODO(fmarier): remove this once the hacky code in

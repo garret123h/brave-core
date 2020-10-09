@@ -1,7 +1,7 @@
 import("//brave/browser/tor/buildflags/buildflags.gni")
 import("//brave/components/brave_ads/browser/buildflags/buildflags.gni")
 import("//brave/components/brave_rewards/browser/buildflags/buildflags.gni")
-import("//brave/components/ipfs/browser/buildflags/buildflags.gni")
+import("//brave/components/ipfs/buildflags/buildflags.gni")
 import("//build/config/features.gni")
 import("//build/config/ui.gni")
 
@@ -12,7 +12,7 @@ source_set("utility") {
     "//chrome/utility/*",
     "//brave/utility/*",
     "//brave:child_dependencies",
-    "//brave/test:*"
+    "//brave/test:*",
   ]
 
   sources = [
@@ -45,8 +45,8 @@ source_set("utility") {
 
   if (is_mac) {
     sources += [
-      "importer/brave_safari_importer.mm",
       "importer/brave_safari_importer.h",
+      "importer/brave_safari_importer.mm",
     ]
 
     deps += [

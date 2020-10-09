@@ -8,7 +8,7 @@
 #include "brave/components/brave_rewards/common/pref_names.h"
 #include "brave/components/brave_wallet/browser/buildflags/buildflags.h"
 #include "brave/components/brave_wayback_machine/buildflags.h"
-#include "brave/components/ipfs/browser/buildflags/buildflags.h"
+#include "brave/components/ipfs/buildflags/buildflags.h"
 #include "chrome/browser/net/prediction_options.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/ui/browser.h"
@@ -23,8 +23,8 @@
 #include "content/public/test/browser_test.h"
 
 #if BUILDFLAG(IPFS_ENABLED)
-#include "brave/components/ipfs/common/ipfs_constants.h"
-#include "brave/components/ipfs/common/pref_names.h"
+#include "brave/components/ipfs/ipfs_constants.h"
+#include "brave/components/ipfs/pref_names.h"
 #endif
 
 #if BUILDFLAG(BRAVE_WALLET_ENABLED)
@@ -50,10 +50,8 @@ IN_PROC_BROWSER_TEST_F(BraveProfilePrefsBrowserTest, MiscBravePrefs) {
   EXPECT_FALSE(
       browser()->profile()->GetPrefs()->GetBoolean(kNoScriptControlType));
   EXPECT_TRUE(
-      browser()->profile()->GetPrefs()->GetBoolean(
-        kShieldsStatsBadgeVisible));
-  EXPECT_TRUE(
-      browser()->profile()->GetPrefs()->GetBoolean(kAdControlType));
+      browser()->profile()->GetPrefs()->GetBoolean(kShieldsStatsBadgeVisible));
+  EXPECT_TRUE(browser()->profile()->GetPrefs()->GetBoolean(kAdControlType));
   EXPECT_TRUE(
       browser()->profile()->GetPrefs()->GetBoolean(kGoogleLoginControlType));
   EXPECT_TRUE(
@@ -62,21 +60,17 @@ IN_PROC_BROWSER_TEST_F(BraveProfilePrefsBrowserTest, MiscBravePrefs) {
       browser()->profile()->GetPrefs()->GetBoolean(kTwitterEmbedControlType));
   EXPECT_FALSE(
       browser()->profile()->GetPrefs()->GetBoolean(kLinkedInEmbedControlType));
-  EXPECT_TRUE(
-      browser()->profile()->GetPrefs()->GetBoolean(kWebTorrentEnabled));
+  EXPECT_TRUE(browser()->profile()->GetPrefs()->GetBoolean(kWebTorrentEnabled));
 #if BUILDFLAG(ENABLE_BRAVE_WAYBACK_MACHINE)
-  EXPECT_TRUE(browser()->profile()->GetPrefs()->
-      GetBoolean(kBraveWaybackMachineEnabled));
+  EXPECT_TRUE(browser()->profile()->GetPrefs()->GetBoolean(
+      kBraveWaybackMachineEnabled));
 #endif
-  EXPECT_TRUE(
-      browser()->profile()->GetPrefs()->GetBoolean(kHangoutsEnabled));
-  EXPECT_FALSE(
-      browser()->profile()->GetPrefs()->GetBoolean(
-          brave_rewards::prefs::kHideButton));
+  EXPECT_TRUE(browser()->profile()->GetPrefs()->GetBoolean(kHangoutsEnabled));
+  EXPECT_FALSE(browser()->profile()->GetPrefs()->GetBoolean(
+      brave_rewards::prefs::kHideButton));
 #if BUILDFLAG(IPFS_ENABLED)
-  EXPECT_EQ(
-      browser()->profile()->GetPrefs()->GetInteger(kIPFSResolveMethod),
-      static_cast<int>((ipfs::IPFSResolveMethodTypes::IPFS_ASK)));
+  EXPECT_EQ(browser()->profile()->GetPrefs()->GetInteger(kIPFSResolveMethod),
+            static_cast<int>((ipfs::IPFSResolveMethodTypes::IPFS_ASK)));
   EXPECT_FALSE(
       browser()->profile()->GetPrefs()->GetBoolean(kIPFSBinaryAvailable));
 #endif
@@ -86,9 +80,8 @@ IN_PROC_BROWSER_TEST_F(BraveProfilePrefsBrowserTest, MiscBravePrefs) {
   EXPECT_EQ(
       browser()->profile()->GetPrefs()->GetInteger(kBraveWalletWeb3Provider),
       static_cast<int>(BraveWalletWeb3ProviderTypes::ASK));
-  EXPECT_FALSE(
-      browser()->profile()->GetPrefs()->GetBoolean(
-          kLoadCryptoWalletsOnStartup));
+  EXPECT_FALSE(browser()->profile()->GetPrefs()->GetBoolean(
+      kLoadCryptoWalletsOnStartup));
   EXPECT_FALSE(
       browser()->profile()->GetPrefs()->GetBoolean(kOptedIntoCryptoWallets));
 #endif
@@ -109,7 +102,7 @@ IN_PROC_BROWSER_TEST_F(BraveProfilePrefsFirstRunBrowserTest,
                        AdvancedShieldsNewUserValue) {
   // verify value of pref (default to simple view)
   EXPECT_FALSE(browser()->profile()->GetPrefs()->GetBoolean(
-          kShieldsAdvancedViewEnabled));
+      kShieldsAdvancedViewEnabled));
   // verify that pref was set (and is not default)
   const PrefService::Preference* pref =
       browser()->profile()->GetPrefs()->FindPreference(
@@ -121,9 +114,8 @@ IN_PROC_BROWSER_TEST_F(BraveProfilePrefsFirstRunBrowserTest,
 IN_PROC_BROWSER_TEST_F(BraveProfilePrefsBrowserTest,
                        AdvancedShieldsExistingUserValue) {
   // verify value of pref (default to advanced view)
-  EXPECT_TRUE(
-        browser()->profile()->GetPrefs()->GetBoolean(
-          kShieldsAdvancedViewEnabled));
+  EXPECT_TRUE(browser()->profile()->GetPrefs()->GetBoolean(
+      kShieldsAdvancedViewEnabled));
   // verify that pref was set (and is not default)
   const PrefService::Preference* pref =
       browser()->profile()->GetPrefs()->FindPreference(

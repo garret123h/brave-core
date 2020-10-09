@@ -11,7 +11,7 @@
 #include "brave/components/brave_component_updater/browser/features.h"
 #include "brave/components/brave_shields/common/features.h"
 #include "brave/components/brave_sync/buildflags/buildflags.h"
-#include "brave/components/ipfs/browser/buildflags/buildflags.h"
+#include "brave/components/ipfs/buildflags/buildflags.h"
 #include "brave/components/ntp_background_images/browser/features.h"
 #include "brave/components/speedreader/buildflags.h"
 #include "chrome/browser/profiles/profile.h"
@@ -23,15 +23,13 @@ using ntp_background_images::features::kBraveNTPBrandedWallpaper;
 using ntp_background_images::features::kBraveNTPBrandedWallpaperDemo;
 using ntp_background_images::features::kBraveNTPSuperReferralWallpaper;
 
-
 #if BUILDFLAG(ENABLE_SPEEDREADER)
 #include "brave/components/speedreader/features.h"
 
-#define SPEEDREADER_FEATURE_ENTRIES \
-    {"brave-speedreader",                                                  \
-     flag_descriptions::kBraveSpeedreaderName,                             \
-     flag_descriptions::kBraveSpeedreaderDescription, kOsDesktop,          \
-     FEATURE_VALUE_TYPE(speedreader::kSpeedreaderFeature)},
+#define SPEEDREADER_FEATURE_ENTRIES                                \
+  { "brave-speedreader", flag_descriptions::kBraveSpeedreaderName, \
+    flag_descriptions::kBraveSpeedreaderDescription, kOsDesktop,   \
+    FEATURE_VALUE_TYPE(speedreader::kSpeedreaderFeature)},
 #else
 #define SPEEDREADER_FEATURE_ENTRIES
 #endif
@@ -39,52 +37,48 @@ using ntp_background_images::features::kBraveNTPSuperReferralWallpaper;
 #if BUILDFLAG(ENABLE_BRAVE_SYNC)
 #include "brave/components/brave_sync/features.h"
 
-#define BRAVE_SYNC_FEATURE_ENTRIES                                         \
-    {"brave-sync-v2",                                                      \
-     flag_descriptions::kBraveSyncName,                                    \
-     flag_descriptions::kBraveSyncDescription, kOsDesktop,                 \
-     FEATURE_VALUE_TYPE(brave_sync::features::kBraveSync)},
+#define BRAVE_SYNC_FEATURE_ENTRIES                        \
+  { "brave-sync-v2", flag_descriptions::kBraveSyncName,   \
+    flag_descriptions::kBraveSyncDescription, kOsDesktop, \
+    FEATURE_VALUE_TYPE(brave_sync::features::kBraveSync)},
 #else
 #define BRAVE_SYNC_FEATURE_ENTRIES
 #endif
 
 #if BUILDFLAG(IPFS_ENABLED)
-#include "brave/components/ipfs/browser/features.h"
+#include "brave/components/ipfs/features.h"
 
-#define BRAVE_IPFS_FEATURE_ENTRIES                                         \
-    {"brave-ipfs",                                                         \
-     flag_descriptions::kBraveIpfsName,                                    \
-     flag_descriptions::kBraveIpfsDescription, kOsDesktop,                 \
-     FEATURE_VALUE_TYPE(ipfs::features::kIpfsFeature)},
+#define BRAVE_IPFS_FEATURE_ENTRIES                        \
+  { "brave-ipfs", flag_descriptions::kBraveIpfsName,      \
+    flag_descriptions::kBraveIpfsDescription, kOsDesktop, \
+    FEATURE_VALUE_TYPE(ipfs::features::kIpfsFeature)},
 #else
 #define BRAVE_IPFS_FEATURE_ENTRIES
 #endif
 
-#define BRAVE_FEATURE_ENTRIES \
-    {"use-dev-updater-url",                                                \
-     flag_descriptions::kUseDevUpdaterUrlName,                             \
-     flag_descriptions::kUseDevUpdaterUrlDescription, kOsAll,              \
-     FEATURE_VALUE_TYPE(brave_component_updater::kUseDevUpdaterUrl)},      \
-    {"brave-ntp-branded-wallpaper",                                        \
-     flag_descriptions::kBraveNTPBrandedWallpaperName,                     \
-     flag_descriptions::kBraveNTPBrandedWallpaperDescription, kOsAll,      \
-     FEATURE_VALUE_TYPE(kBraveNTPBrandedWallpaper)},                       \
-    {"brave-ntp-branded-wallpaper-demo",                                   \
-     flag_descriptions::kBraveNTPBrandedWallpaperDemoName,                 \
-     flag_descriptions::kBraveNTPBrandedWallpaperDemoDescription, kOsAll,  \
-     FEATURE_VALUE_TYPE(kBraveNTPBrandedWallpaperDemo)},                   \
-    {"brave-adblock-cosmetic-filtering",                                   \
-     flag_descriptions::kBraveAdblockCosmeticFilteringName,                \
-     flag_descriptions::kBraveAdblockCosmeticFilteringDescription, kOsAll, \
-     FEATURE_VALUE_TYPE(kBraveAdblockCosmeticFiltering)},                  \
-    SPEEDREADER_FEATURE_ENTRIES                                            \
-    BRAVE_SYNC_FEATURE_ENTRIES                                             \
-    BRAVE_IPFS_FEATURE_ENTRIES                                             \
-    {"brave-super-referral",                                               \
-     flag_descriptions::kBraveSuperReferralName,                           \
-     flag_descriptions::kBraveSuperReferralDescription,                    \
-     flags_ui::kOsMac | flags_ui::kOsWin | flags_ui::kOsAndroid,           \
-     FEATURE_VALUE_TYPE(kBraveNTPSuperReferralWallpaper)},
+#define BRAVE_FEATURE_ENTRIES                                                \
+  { "use-dev-updater-url", flag_descriptions::kUseDevUpdaterUrlName,         \
+    flag_descriptions::kUseDevUpdaterUrlDescription, kOsAll,                 \
+    FEATURE_VALUE_TYPE(brave_component_updater::kUseDevUpdaterUrl)},         \
+      {"brave-ntp-branded-wallpaper",                                        \
+       flag_descriptions::kBraveNTPBrandedWallpaperName,                     \
+       flag_descriptions::kBraveNTPBrandedWallpaperDescription, kOsAll,      \
+       FEATURE_VALUE_TYPE(kBraveNTPBrandedWallpaper)},                       \
+      {"brave-ntp-branded-wallpaper-demo",                                   \
+       flag_descriptions::kBraveNTPBrandedWallpaperDemoName,                 \
+       flag_descriptions::kBraveNTPBrandedWallpaperDemoDescription, kOsAll,  \
+       FEATURE_VALUE_TYPE(kBraveNTPBrandedWallpaperDemo)},                   \
+      {"brave-adblock-cosmetic-filtering",                                   \
+       flag_descriptions::kBraveAdblockCosmeticFilteringName,                \
+       flag_descriptions::kBraveAdblockCosmeticFilteringDescription, kOsAll, \
+       FEATURE_VALUE_TYPE(kBraveAdblockCosmeticFiltering)},                  \
+      SPEEDREADER_FEATURE_ENTRIES BRAVE_SYNC_FEATURE_ENTRIES                 \
+          BRAVE_IPFS_FEATURE_ENTRIES{                                        \
+              "brave-super-referral",                                        \
+              flag_descriptions::kBraveSuperReferralName,                    \
+              flag_descriptions::kBraveSuperReferralDescription,             \
+              flags_ui::kOsMac | flags_ui::kOsWin | flags_ui::kOsAndroid,    \
+              FEATURE_VALUE_TYPE(kBraveNTPSuperReferralWallpaper)},
 
 #define SetFeatureEntryEnabled SetFeatureEntryEnabled_ChromiumImpl
 #include "../../../../chrome/browser/about_flags.cc"  // NOLINT

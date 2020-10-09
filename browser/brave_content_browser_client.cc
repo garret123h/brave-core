@@ -24,7 +24,6 @@
 #include "brave/common/pref_names.h"
 #include "brave/common/webui_url_constants.h"
 #include "brave/components/binance/browser/buildflags/buildflags.h"
-#include "brave/components/gemini/browser/buildflags/buildflags.h"
 #include "brave/components/brave_rewards/browser/buildflags/buildflags.h"
 #include "brave/components/brave_shields/browser/brave_shields_util.h"
 #include "brave/components/brave_shields/browser/brave_shields_web_contents_observer.h"
@@ -32,8 +31,9 @@
 #include "brave/components/brave_shields/common/brave_shield_constants.h"
 #include "brave/components/brave_wallet/browser/buildflags/buildflags.h"
 #include "brave/components/brave_webtorrent/browser/buildflags/buildflags.h"
-#include "brave/components/ipfs/browser/buildflags/buildflags.h"
-#include "brave/components/ipfs/browser/features.h"
+#include "brave/components/gemini/browser/buildflags/buildflags.h"
+#include "brave/components/ipfs/buildflags/buildflags.h"
+#include "brave/components/ipfs/features.h"
 #include "brave/components/speedreader/buildflags.h"
 #include "brave/grit/brave_generated_resources.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
@@ -70,14 +70,14 @@ using extensions::ChromeContentBrowserClientExtensionsPart;
 #endif
 
 #if BUILDFLAG(ENABLE_BRAVE_WEBTORRENT)
-#include "brave/components/brave_webtorrent/browser/content_browser_client_helper.h"
 #include "brave/browser/extensions/brave_webtorrent_navigation_throttle.h"
+#include "brave/components/brave_webtorrent/browser/content_browser_client_helper.h"
 #endif
 
 #if BUILDFLAG(IPFS_ENABLED)
 #include "brave/browser/ipfs/content_browser_client_helper.h"
 #include "brave/browser/ipfs/ipfs_service_factory.h"
-#include "brave/components/ipfs/browser/ipfs_navigation_throttle.h"
+#include "brave/components/ipfs/ipfs_navigation_throttle.h"
 #endif
 
 #if BUILDFLAG(BRAVE_REWARDS_ENABLED)
@@ -104,8 +104,8 @@ using extensions::ChromeContentBrowserClientExtensionsPart;
 
 #if BUILDFLAG(BRAVE_WALLET_ENABLED)
 #include "brave/browser/brave_wallet/brave_wallet_service_factory.h"
-#include "brave/components/brave_wallet/common/brave_wallet_constants.h"
 #include "brave/components/brave_wallet/browser/brave_wallet_service.h"
+#include "brave/components/brave_wallet/common/brave_wallet_constants.h"
 #endif
 
 namespace {
@@ -193,9 +193,8 @@ bool BraveContentBrowserClient::HandleExternalProtocol(
 #if BUILDFLAG(IPFS_ENABLED)
   if (base::FeatureList::IsEnabled(ipfs::features::kIpfsFeature) &&
       ipfs::ContentBrowserClientHelper::IsIPFSProtocol(url)) {
-    ipfs::ContentBrowserClientHelper::HandleIPFSProtocol(url,
-        std::move(web_contents_getter),
-        page_transition, has_user_gesture,
+    ipfs::ContentBrowserClientHelper::HandleIPFSProtocol(
+        url, std::move(web_contents_getter), page_transition, has_user_gesture,
         initiating_origin);
     return true;
   }
@@ -268,8 +267,8 @@ BraveContentBrowserClient::CreateURLLoaderThrottles(
     content::NavigationUIData* navigation_ui_data,
     int frame_tree_node_id) {
   auto result = ChromeContentBrowserClient::CreateURLLoaderThrottles(
-        request, browser_context, wc_getter, navigation_ui_data,
-        frame_tree_node_id);
+      request, browser_context, wc_getter, navigation_ui_data,
+      frame_tree_node_id);
 #if BUILDFLAG(ENABLE_SPEEDREADER)
   content::WebContents* contents = wc_getter.Run();
   if (!contents) {
@@ -277,9 +276,9 @@ BraveContentBrowserClient::CreateURLLoaderThrottles(
   }
   auto* tab_helper =
       speedreader::SpeedreaderTabHelper::FromWebContents(contents);
-  if (tab_helper && tab_helper->IsActiveForMainFrame()
-      && request.resource_type
-          == static_cast<int>(blink::mojom::ResourceType::kMainFrame)) {
+  if (tab_helper && tab_helper->IsActiveForMainFrame() &&
+      request.resource_type ==
+          static_cast<int>(blink::mojom::ResourceType::kMainFrame)) {
     result.push_back(std::make_unique<speedreader::SpeedReaderThrottle>(
         g_brave_browser_process->speedreader_rewriter_service(),
         base::ThreadTaskRunnerHandle::Get()));
@@ -330,20 +329,12 @@ void BraveContentBrowserClient::CreateWebSocket(
     mojo::PendingRemote<network::mojom::WebSocketHandshakeClient>
         handshake_client) {
   auto* proxy = BraveProxyingWebSocket::ProxyWebSocket(
-      frame,
-      std::move(factory),
-      url,
-      site_for_cookies,
-      user_agent,
+      frame, std::move(factory), url, site_for_cookies, user_agent,
       std::move(handshake_client));
 
   if (ChromeContentBrowserClient::WillInterceptWebSocket(frame)) {
     ChromeContentBrowserClient::CreateWebSocket(
-        frame,
-        proxy->web_socket_factory(),
-        url,
-        site_for_cookies,
-        user_agent,
+        frame, proxy->web_socket_factory(), url, site_for_cookies, user_agent,
         proxy->handshake_client().Unbind());
   } else {
     proxy->Start();
@@ -366,11 +357,9 @@ void BraveContentBrowserClient::MaybeHideReferrer(
 
   Profile* profile = Profile::FromBrowserContext(browser_context);
   const bool allow_referrers = brave_shields::AllowReferrers(
-      HostContentSettingsMapFactory::GetForProfile(profile),
-      document_url);
+      HostContentSettingsMapFactory::GetForProfile(profile), document_url);
   const bool shields_up = brave_shields::GetBraveShieldsEnabled(
-      HostContentSettingsMapFactory::GetForProfile(profile),
-      document_url);
+      HostContentSettingsMapFactory::GetForProfile(profile), document_url);
   // Some top-level navigations get empty referrers (brave/brave-browser#3422).
   network::mojom::ReferrerPolicy policy = (*referrer)->policy;
   if (is_main_frame) {
@@ -383,10 +372,9 @@ void BraveContentBrowserClient::MaybeHideReferrer(
   }
 
   content::Referrer new_referrer;
-  if (brave_shields::MaybeChangeReferrer(
-      allow_referrers, shields_up, (*referrer)->url, document_url, request_url,
-      policy,
-      &new_referrer)) {
+  if (brave_shields::MaybeChangeReferrer(allow_referrers, shields_up,
+                                         (*referrer)->url, document_url,
+                                         request_url, policy, &new_referrer)) {
     (*referrer)->url = new_referrer.url;
     (*referrer)->policy = new_referrer.policy;
   }
@@ -408,9 +396,9 @@ GURL BraveContentBrowserClient::GetEffectiveURL(
 }
 
 // [static]
-bool BraveContentBrowserClient::HandleURLOverrideRewrite(GURL* url,
+bool BraveContentBrowserClient::HandleURLOverrideRewrite(
+    GURL* url,
     content::BrowserContext* browser_context) {
-
   if (url->host() == chrome::kChromeUISyncHost) {
     GURL::Replacements replacements;
     replacements.SetHostStr(chrome::kChromeUISettingsHost);
@@ -434,7 +422,7 @@ bool BraveContentBrowserClient::HandleURLOverrideRewrite(GURL* url,
       url->host() == ethereum_remote_client_host) {
     auto* registry = extensions::ExtensionRegistry::Get(browser_context);
     if (registry->ready_extensions().GetByID(
-        ethereum_remote_client_extension_id)) {
+            ethereum_remote_client_extension_id)) {
       *url = GURL(ethereum_remote_client_base_url);
       return true;
     }
@@ -457,7 +445,7 @@ BraveContentBrowserClient::CreateThrottlesForNavigation(
 
 #if BUILDFLAG(ENABLE_TOR)
   std::unique_ptr<content::NavigationThrottle> tor_navigation_throttle =
-    tor::TorNavigationThrottle::MaybeCreateThrottleFor(handle);
+      tor::TorNavigationThrottle::MaybeCreateThrottleFor(handle);
   if (tor_navigation_throttle)
     throttles.push_back(std::move(tor_navigation_throttle));
 #endif
@@ -466,9 +454,9 @@ BraveContentBrowserClient::CreateThrottlesForNavigation(
   content::BrowserContext* context =
       handle->GetWebContents()->GetBrowserContext();
   std::unique_ptr<content::NavigationThrottle> ipfs_navigation_throttle =
-    ipfs::IpfsNavigationThrottle::MaybeCreateThrottleFor(handle,
-        ipfs::IpfsServiceFactory::GetForContext(context),
-        brave::IsRegularProfile(context));
+      ipfs::IpfsNavigationThrottle::MaybeCreateThrottleFor(
+          handle, ipfs::IpfsServiceFactory::GetForContext(context),
+          brave::IsRegularProfile(context));
   if (ipfs_navigation_throttle)
     throttles.push_back(std::move(ipfs_navigation_throttle));
 #endif
