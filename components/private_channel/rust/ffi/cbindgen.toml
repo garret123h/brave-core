@@ -1,6 +1,14 @@
 # The language to output bindings in
-language = "C"
-include_guard = "PRIVATE_CHANNEL_RUST_FFI_H"
+language = "C++"
+
+# Options for Wrapping the Contents of the Header
+header = '''
+/* Copyright (c) 2020 The Brave Authors. All rights reserved.
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */'''
+
+include_guard = "BRAVE_COMPONENTS_PRIVATE_CHANNEL_RUST_FFI_SRC_LIB_H_"
 
 [parse]
 # Whether to parse dependent crates and include their types in the generated

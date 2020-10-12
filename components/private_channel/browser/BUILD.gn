@@ -1,8 +1,10 @@
 import("//brave/build/config.gni")
-import("//brave/components/private_channel/buildflags.gni")
 
 source_set("browser") {
-  public_deps = []
+  public_deps = [
+    ":buildflags",
+    "//brave/build/rust",
+  ]
 
   sources = [
     "constants.cc",

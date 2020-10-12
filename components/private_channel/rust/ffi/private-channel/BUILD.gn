@@ -1,0 +1,12 @@
+source_set("rust_lib") {
+  visibility = [ "//brave/build/rust:*" ]
+  inputs = [
+    # Underlying library code
+    "Cargo.lock",
+    "Cargo.toml",
+    "src/lib.rs",
+    "repsys-crypto/Cargo.lock",
+    "repsys-crypto/Cargo.toml",
+    "repsys-crypto/src/lib.rs",
+  ]
+}
